@@ -19,30 +19,30 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 5),
       vsync: this,
-    );
+    ); // tiempo de animacion
 
     _logoAnimation = Tween<Offset>(
-      begin: const Offset(-2.0, 0.0), // MÁS a la izquierda
+      begin: Offset(0.0, 3.0), // Fuera desde abajo
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _textAnimation = Tween<Offset>(
-      begin: const Offset(-2.0, 0.0), // MÁS a la izquierda
+      begin: Offset(0.0, 3.0), // Fuera desde abajo
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.3, 1.0, curve: Curves.easeInOut),
+        curve: Interval(0.3, 1.0, curve: Curves.easeInOut),
       ),
     );
 
     _controller.forward();
 
     // Navegación a la siguiente pantalla luego del splash
-    Timer(const Duration(seconds: 4), () {
-      Navigator.of(context).pushReplacementNamed('/home');
+    Timer(Duration(seconds: 4), () {
+      Navigator.of(context).pushReplacementNamed('/intro1');
     });
   }
 
@@ -55,15 +55,12 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFA5DBD7),
-
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SlideTransition(
+      backgroundColor: Color(0xFFA5DBD7),
+      body: Stack(
+        children: [
+          // Logo animado
+          Center(
+            child: SlideTransition(
               position: _logoAnimation,
               child: Image.asset(
                 'assets/images/logo.png',
@@ -71,23 +68,27 @@ class _SplashScreenState extends State<SplashScreen>
                 height: 200,
               ),
             ),
+          ),
 
-            const SizedBox(height: 20),
-
-            SlideTransition(
+          // Texto animado debajo del logo
+          Center(
+            child: SlideTransition(
               position: _textAnimation,
-              child: const Text(
-                'Syndra',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Raleway',
-                  color: Color.fromRGBO(33, 78, 62, 1.0),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 260.0),
+                child: const Text(
+                  'Syndra',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Raleway',
+                    color: Color.fromRGBO(33, 78, 62, 1.0),
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

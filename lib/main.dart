@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:syndra_app/splash/splash_screen.dart';
+import 'package:syndra_app/intros/intro1.dart';
+import 'package:syndra_app/intros/intro2.dart';
+import 'package:syndra_app/intros/intro3.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +18,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: SplashScreen(),
+
+      routes: {
+        '/intro1': (context) => const Intro1(),
+        '/intro2': (context) => const Intro2(),
+        '/intro3': (context) => const Intro3(),
+      },
     );
   }
 }
