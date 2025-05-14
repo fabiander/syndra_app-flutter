@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:syndra_app/login/login_screen.dart'; //
 
 class Intro3 extends StatefulWidget {
   const Intro3({super.key});
@@ -21,11 +23,27 @@ class _Intro3State extends State<Intro3> with SingleTickerProviderStateMixin {
     );
 
     _textAnimation = Tween<Offset>(
-      begin: const Offset(-1.5, 0), // entrada desde la derecha
+      begin: const Offset(-1.5, 0), // entrada desde la izquierda
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
-    _controller.forward();
+    // Espera un poco antes de mostrar la caja
+    Future.delayed(const Duration(milliseconds: 600), () {
+      _controller.forward();
+    });
+
+    // Navega al login
+    Timer(const Duration(seconds: 5), () {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 600),
+          pageBuilder: (_, __, ___) => const LoginScreen(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+    });
   }
 
   @override
@@ -37,33 +55,34 @@ class _Intro3State extends State<Intro3> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/im_gafas.jpg', fit: BoxFit.cover),
-
+          Image.asset(
+            'assets/images/im_intro3.jpg', // ✅ tu fondo aquí
+            fit: BoxFit.cover,
+          ),
           SlideTransition(
             position: _textAnimation,
             child: Align(
-              alignment: Alignment.topCenter,
-
+              alignment: Alignment.center,
               child: Container(
-                margin: const EdgeInsets.only(right: 45, top: 630),
-                padding: const EdgeInsets.all(36),
+                margin: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(163, 217, 207, 0.3),
+                  color: Colors.white.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(20),
                 ),
-
                 child: const Text(
-                  'Apoyo emocional a un toque de distancia',
+                  'Última intro antes del login...',
                   style: TextStyle(
-                    fontSize: 29,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'ralleway',
-                    color: Color.fromRGBO(33, 78, 62, 1.0),
+                    fontFamily: 'Raleway',
+                    color: Colors.teal,
                   ),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),

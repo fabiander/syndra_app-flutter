@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'intro3.dart';
 
 class Intro2 extends StatefulWidget {
   const Intro2({super.key});
@@ -26,10 +27,25 @@ class _Intro2State extends State<Intro2> with SingleTickerProviderStateMixin {
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
+    // Espera un poco antes de mostrar la caja
+    Future.delayed(const Duration(milliseconds: 600), () {
+      _controller.forward();
+    });
+
+
     _controller.forward();
 
-    Timer(Duration(seconds: 4), () {
-      Navigator.of(context).pushReplacementNamed('/intro3');
+    // Navegación con FadeTransition
+    Timer(const Duration(seconds: 5), () {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 600),
+          pageBuilder: (_, __, ___) => const Intro3(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
     });
   }
 
