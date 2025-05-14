@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'intro2.dart';
 
 class Intro1 extends StatefulWidget {
   const Intro1({super.key});
@@ -11,25 +12,45 @@ class Intro1 extends StatefulWidget {
 class _Intro1State extends State<Intro1> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _textAnimation;
+  late Animation<double> _imageFadeAnimation;
 
   @override
   void initState() {
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 4),
       vsync: this,
     );
 
+    _imageFadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.8, curve: Curves.easeInOut),
+    );
+
     _textAnimation = Tween<Offset>(
-      begin: const Offset(-1.5, 0), // entrada desde la izquierda
+      begin: const Offset(-1.5, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
 
-    _controller.forward();
+    // ✅ Espera a que se dibuje el primer frame antes de animar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.forward();
+    });
 
-    Timer(Duration(seconds: 4), () {
-      Navigator.of(context).pushReplacementNamed('/intro2');
+    // ✅ Cambio a la siguiente pantalla después de 6 segundos
+    Timer(const Duration(seconds: 6), () {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (_, __, ___) => const Intro2(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
     });
   }
 
@@ -42,24 +63,31 @@ class _Intro1State extends State<Intro1> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent, // ✅ fondo transparente
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/im_manos.jpg', fit: BoxFit.cover),
+          // ✅ Imagen con Fade
+          FadeTransition(
+            opacity: _imageFadeAnimation,
+            child: Image.asset(
+              'assets/images/im_manos.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
 
+          // ✅ Caja animada con Slide
           SlideTransition(
             position: _textAnimation,
             child: Align(
               alignment: Alignment.topCenter,
-
               child: Container(
                 margin: const EdgeInsets.only(right: 45, top: 90),
                 padding: const EdgeInsets.all(36),
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(163, 217, 207, 0.3),
+                  color: const Color.fromRGBO(163, 217, 207, 0.3),
                   borderRadius: BorderRadius.circular(20),
                 ),
-
                 child: const Text(
                   'Apoyo emocional a un toque de distancia',
                   style: TextStyle(

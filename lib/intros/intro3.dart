@@ -24,6 +24,13 @@ class _Intro3State extends State<Intro3> with SingleTickerProviderStateMixin {
       begin: const Offset(-1.5, 0), // entrada desde la derecha
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  
+    // Espera un poco antes de mostrar la caja
+    Future.delayed(const Duration(milliseconds: 600), () {
+      _controller.forward();
+    });
+
+
 
     _controller.forward();
   }
