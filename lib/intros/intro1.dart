@@ -19,21 +19,19 @@ class _Intro1State extends State<Intro1> with SingleTickerProviderStateMixin {
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
 
     _imageFadeAnimation = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.8, curve: Curves.easeInOut),
+      curve: const Interval(0.0, 0.4, curve: Curves.easeInOut),
     );
 
     _textAnimation = Tween<Offset>(
       begin: const Offset(-1.5, 0),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     // ✅ Espera a que se dibuje el primer frame antes de animar
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -70,10 +68,7 @@ class _Intro1State extends State<Intro1> with SingleTickerProviderStateMixin {
           // ✅ Imagen con Fade
           FadeTransition(
             opacity: _imageFadeAnimation,
-            child: Image.asset(
-              'assets/images/im_manos.jpg',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('assets/images/im_manos.jpg', fit: BoxFit.cover),
           ),
 
           // ✅ Caja animada con Slide
