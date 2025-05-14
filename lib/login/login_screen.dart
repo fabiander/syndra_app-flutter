@@ -8,9 +8,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/fondo_login.png', fit: BoxFit.cover),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Center(

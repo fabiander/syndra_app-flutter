@@ -60,29 +60,31 @@ class _Intro3State extends State<Intro3> with SingleTickerProviderStateMixin {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/images/im_intro3.jpg', // ✅ tu fondo aquí
+            'assets/images/im_gafas.jpg', // ✅ tu fondo aquí
             fit: BoxFit.cover,
           ),
+
           SlideTransition(
             position: _textAnimation,
             child: Align(
-              alignment: Alignment.center,
+              alignment: Alignment.bottomCenter,
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 30),
-                padding: const EdgeInsets.all(30),
+                margin: const EdgeInsets.only(right: 45, bottom: 100),
+                padding: const EdgeInsets.all(36),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Color.fromRGBO(163, 217, 207, 0.3),
                   borderRadius: BorderRadius.circular(20),
                 ),
+
                 child: const Text(
-                  'Última intro antes del login...',
+                  'Apoyo emocional a un toque de distancia',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Raleway',
                     color: Colors.teal,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.left,
                 ),
               ),
             ),

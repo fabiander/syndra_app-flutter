@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:syndra_app/login/login_screen.dart';
 import 'package:syndra_app/splash/splash_screen.dart';
 import 'package:syndra_app/intros/intro1.dart';
 import 'package:syndra_app/intros/intro2.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: SplashScreen(),
+      home: LoginScreen(),
 
       routes: {
         '/intro1': (context) => const Intro1(),
