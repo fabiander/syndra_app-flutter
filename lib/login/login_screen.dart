@@ -11,7 +11,6 @@ class LoginScreen extends StatelessWidget {
         decoration: BoxDecoration(color: Color.fromRGBO(163, 217, 207, 1.0)),
         child: Stack(
           children: [
-
             Positioned.fill(
               child: Image.asset(
                 'assets/images/img_media.png',
@@ -19,25 +18,38 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
 
-            Align(                           //   alinacion sube  
+            Align(
+              //   alinacion sube
               alignment: Alignment.topCenter,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
 
+                children: [
                   Container(
+                    width: 340,
+                    height: 700,
+                    margin: EdgeInsets.only(top: 95),
+                    //padding: EdgeInsets.only(top: 20),
                     decoration: BoxDecoration(
                       color: Colors.transparent,
-                      border: Border.all(color: Colors.green, width: 2),
+                      border: Border.all(
+                        color: Color.fromRGBO(63, 140, 112, 1.0),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
 
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-
                         Container(
+                          //  ESTE ES EL LOGO
                           margin: EdgeInsets.only(top: 20),
-                          padding: EdgeInsets.all(36),
+                          padding: EdgeInsets.all(16),
                           child: Image.asset(
                             'assets/images/login_logo.png',
                             fit: BoxFit.cover,
@@ -45,33 +57,61 @@ class LoginScreen extends StatelessWidget {
                         ),
 
                         Container(
+                          width: 300,
+                          // caja de email y contraseña
                           margin: EdgeInsets.only(top: 20),
-                          padding: EdgeInsets.all(36),
+                          padding: EdgeInsets.all(10),
 
-                          
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center, 
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                child:_buildInputField(
+                              SizedBox(
+                                width: 400,
+                                child: _buildInputField(
                                   Icons.email,
                                   'Correo electrónico',
-                                ), 
+                                ),
                               ),
 
+                              SizedBox(height: 10),
                               Container(
                                 child: _buildInputField(
                                   Icons.lock,
                                   'Contraseña',
-                                )
-                              )
-
+                                ),
+                              ),
                             ],
-                          
-
-
                           ),
-                          
+                        ),
+
+                        Container(
+                          width: 300,
+                          margin: EdgeInsets.only(top: 20),
+                          padding: EdgeInsets.all(26),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: _buildButton('Ingreso', () {
+                                  // Acción de login
+                                }),
+                              ),
+
+                              SizedBox(height: 20),
+
+                              Container(
+                                child: _buildSpecialButton('Registro', () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => const RegistroScreen(),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
                         ),
                         // Aquí puedes agregar más containers o widgets
                       ],
@@ -79,7 +119,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -88,100 +128,105 @@ class LoginScreen extends StatelessWidget {
 
   Widget _buildInputField(IconData icon, String hint) {
     return TextField(
+      style: TextStyle(
+        fontFamily: 'Raleway',
+        fontWeight: FontWeight.w500, // Medium
+        fontSize: 18,
+        color: Color.fromRGBO(33, 78, 62, 1.0), // Color del texto ingresado
+      ),
+
       decoration: InputDecoration(
-        prefixIcon: Icon(icon),
+        prefixIcon: Icon(
+          icon,
+          color: Color.fromRGBO(33, 78, 62, 1.0),
+        ), // Icono verde
         hintText: hint,
-        border: OutlineInputBorder(),
+        hintStyle: TextStyle(
+          color: Color.fromRGBO(33, 78, 62, 1.0), // Color del hint (verde)
+          fontFamily: 'Raleway',
+          fontWeight: FontWeight.w500,
+          fontSize: 18,
+        ),
+        border: UnderlineInputBorder(),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal), // Color de la línea
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal, width: 2),
+        ),
       ),
     );
   }
 }
 
+Widget _buildButton(String label, VoidCallback onPressed) {
+  return SizedBox(
+    width: 300,
+    height: 45,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.teal,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      ),
+      onPressed: onPressed,
+      child: Text(label, style: const TextStyle(fontSize: 18)),
+    ),
+  );
+}
 
-
-
-
-Containe(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 50, color: Colors.teal),
-                      ),
-              
-                      
-                      const SizedBox(height: 30),
-                      _buildInputField(Icons.email, 'Correo electrónico'),
-                      const SizedBox(height: 15),
-                      _buildInputField(Icons.lock, 'Contraseña', obscureText: true),
-                      const SizedBox(height: 30),
-                      _buildButton('Ingreso', () {
-                        // Acción de login
-                      }),
-                      const SizedBox(height: 15),
-                      _buildButton('Registro', () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegistroScreen(),
-                          ),
-                        );
-                      }),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () {
-                          // Recuperar contraseña
-                        },
-                        child: const Text('¿Olvidó su contraseña?'),
-                      ),
-                    ],
-                  ),
+// Nuevo widget para un botón con decoración diferente
+Widget _buildSpecialButton(String label, VoidCallback onPressed) {
+  return SizedBox(
+    width: 300,
+    height: 45,
+    child: Stack(
+      children: [
+        // Sombra debajo
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.3),
+                  offset: Offset(0, 6), // Solo abajo
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Botón encima
+        Positioned.fill(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  Colors
+                      .white, // Fondo sólido para que no se vea la sombra dentro
+              foregroundColor: Colors.teal,
+              elevation: 0, // Sin sombra interna
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: Color.fromRGBO(242, 242, 242, 1.0),
+                  width: 2,
                 ),
               ),
             ),
-          ],
-
-
-
-
-
-          Widget _buildInputField(
-    IconData icon,
-    String hint, {
-    bool obscureText = false,
-  }) {
-    return TextField(
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon),
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
-        border: const OutlineInputBorder(borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(vertical: 15),
-      ),
-    );
-  }
-
-  Widget _buildButton(String label, VoidCallback onPressed) {
-    return SizedBox(
-      width: double.infinity,
-      height: 45,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.teal,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            onPressed: onPressed,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Raleway',
+              ),
+            ),
           ),
         ),
-        onPressed: onPressed,
-        child: Text(label, style: const TextStyle(fontSize: 16)),
-      ),
-    );
-  }
+      ],
+    ),
+  );
+}
