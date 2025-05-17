@@ -92,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                child: _buildButton('Ingreso', () {
+                                child: _buildButton1('Ingreso', () {
                                   // Acción de login
                                 }),
                               ),
@@ -100,7 +100,7 @@ class LoginScreen extends StatelessWidget {
                               SizedBox(height: 20),
 
                               Container(
-                                child: _buildSpecialButton('Registro', () {
+                                child: _buildButtonn2('Registro', () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -159,74 +159,72 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-Widget _buildButton(String label, VoidCallback onPressed) {
-  return SizedBox(
+Widget _buildButton1(String label, VoidCallback onPressed) {
+  return Container(
     width: 300,
     height: 45,
+    decoration: BoxDecoration(
+     // borderRadius: BorderRadius.circular(25),
+      boxShadow: [
+        BoxShadow(
+          color: Color.fromRGBO(0, 0, 0, 0.15), // Sombra suave
+          offset: Offset(0, 6),
+          blurRadius: 8,
+          spreadRadius: -4,
+        ),
+      ],
+    ),
+
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         foregroundColor: Colors.teal,
+        elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       ),
       onPressed: onPressed,
       child: Text(label, style: const TextStyle(fontSize: 18)),
     ),
+    
   );
 }
 
-// Nuevo widget para un botón con decoración diferente
-Widget _buildSpecialButton(String label, VoidCallback onPressed) {
-  return SizedBox(
+
+
+Widget _buildButtonn2(String label, VoidCallback onPressed) {
+  return Container(
     width: 300,
     height: 45,
-    child: Stack(
-      children: [
-        // Sombra debajo
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.3),
-                  offset: Offset(0, 6), // Solo abajo
-                  blurRadius: 4,
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-          ),
-        ),
-        // Botón encima
-        Positioned.fill(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  Colors
-                      .white, // Fondo sólido para que no se vea la sombra dentro
-              foregroundColor: Colors.teal,
-              elevation: 0, // Sin sombra interna
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Color.fromRGBO(242, 242, 242, 1.0),
-                  width: 2,
-                ),
-              ),
-            ),
-            onPressed: onPressed,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Raleway',
-              ),
-            ),
-          ),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(25),
+      boxShadow: [
+        BoxShadow(
+          color: Color.fromRGBO(0, 0, 0, 0.10), // Sombra suave
+          offset: Offset(0, 8),
+          blurRadius: 8,
+          spreadRadius: -8,
         ),
       ],
+    ),
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.teal,
+        elevation: 4,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+          side: BorderSide(color: Color.fromRGBO(242, 242, 242, 1.0), width: 3),
+          ),
+        
+      ),
+      onPressed: onPressed,
+      child: Text(label, style: const TextStyle(
+        fontSize: 18, 
+        fontWeight: FontWeight.bold,
+          fontFamily: 'Raleway',
+        )
+        ),
     ),
   );
 }
