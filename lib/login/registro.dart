@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:syndra_app/botones_base/boton_elevado.dart';
+import 'package:syndra_app/login/cajas.dart';
 
 class RegistroScreen extends StatelessWidget {
   const RegistroScreen({super.key});
@@ -6,74 +8,113 @@ class RegistroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset('assets/images/fondo_login.png', fit: BoxFit.cover),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildInput('Nombre'),
-                  const SizedBox(height: 12),
-                  _buildInput('Edad', keyboardType: TextInputType.number),
-                  const SizedBox(height: 12),
-                  _buildInput('Correo electrónico'),
-                  const SizedBox(height: 12),
-                  _buildInput('Usuario'),
-                  const SizedBox(height: 12),
-                  _buildInput('Contraseña', obscure: true),
-                  const SizedBox(height: 30),
-                  _buildButton('Registro', () {
-                    // Acción de registro
-                  }),
-                ],
+      body: Container(
+        decoration: const BoxDecoration(color: Color.fromRGBO(163, 217, 207, 1.0)),
+
+
+
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/img_media.png',
+              fit: BoxFit.cover,
               ),
+              ),
+          
+
+
+            Align(
+              alignment: Alignment.topCenter,
+
+              child: Column(
+                
+                children: [
+                  Container(
+                    width: 340,
+                    height: 700,
+                    margin: const EdgeInsets.only(top: 95),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(
+                        color: const Color.fromRGBO(63, 140, 112, 1.0),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+
+                    child: Column( 
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                     
+                      children: [
+
+                        Container(
+                          width: 300,
+                          margin: const EdgeInsets.only(top: 20),
+                          padding: const EdgeInsets.all(10),
+
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+
+                              SizedBox(
+                                width: 400,
+                                child: cajastexto('Nombre', icon: Icons.person),
+                                
+                              ),
+
+                              const SizedBox(height: 35),
+                              
+                              SizedBox(
+                                width: 400,
+                                child: cajastexto('Edad', icon: Icons.calendar_today),
+                              ),
+
+                              const SizedBox(height: 35),
+
+                              SizedBox(
+                                width: 400,
+                                child: cajastexto('Email', icon: Icons.email),
+                              ),
+
+                              const SizedBox(height: 35),
+
+                              SizedBox(
+                                width: 400,
+                                child: cajastexto('Usuario', icon: Icons.person),
+                              ),
+
+                              const SizedBox(height: 35),
+
+                              SizedBox(
+                                width: 400,
+                                child: cajastexto('Contraseña', icon: Icons.lock),
+                              ),
+
+                              const SizedBox(height: 35),
+
+                          
+                              
+                        Container(
+                          padding: const EdgeInsets.only(top: 20),
+                          margin: const EdgeInsets.only(top: 25),
+                          child: BotonElevado(label: 'Guardar', onPressed: () {}
+                                ),
+                        ),
+                            ],
+                          ), 
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),  
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInput(
-    String hint, {
-    bool obscure = false,
-    TextInputType? keyboardType,
-  }) {
-    return TextField(
-      obscureText: obscure,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
-        border: const OutlineInputBorder(borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 15,
-          horizontal: 10,
+          ],
         ),
       ),
     );
-  }
-
-  Widget _buildButton(String text, VoidCallback onPressed) {
-    return SizedBox(
-      width: double.infinity,
-      height: 45,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.teal,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-        ),
-        onPressed: onPressed,
-        child: Text(text, style: const TextStyle(fontSize: 16)),
-      ),
-    );
-  }
+  } 
 }

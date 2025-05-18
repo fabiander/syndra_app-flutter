@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
-import 'registro.dart'; // Para navegar desde el botón
-
+import 'package:syndra_app/login/cajas.dart';
+//import 'package:syndra_app/login/registro.dart';
+// Para navegar desde el botón
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -12,6 +13,8 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(163, 217, 207, 1.0)),
+
+
         child: Stack(
           children: [
             Positioned.fill(
@@ -68,18 +71,20 @@ class LoginScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              
                               SizedBox(
                                 width: 400,
-                                child: _buildInputField(
-                                  Icons.email,
+                                child: cajastexto(
+                                 icon:  Icons.email,
                                   'Correo electrónico',
                                 ),
                               ),
 
                               SizedBox(height: 10),
+
                               Container(
-                                child: _buildInputField(
-                                  Icons.lock,
+                                child: cajastexto(
+                                  icon: Icons.lock,
                                   'Contraseña',
                                 ),
                               ),
@@ -94,7 +99,6 @@ class LoginScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-
                               BotonElevado(
                                 label: 'Ingresar',
                                 onPressed: () {
@@ -102,14 +106,12 @@ class LoginScreen extends StatelessWidget {
                                 },
                               ),
 
-
                               SizedBox(height: 20),
 
                               BotonFantasma(
-                                label: 'Registro', 
+                                label: 'Registro',
                                 onPressed: () {
-                                  //aqui va  conexion
-                                  
+                                  Navigator.pushNamed(context, '/registro');
                                 },
                               ),
                             ],
@@ -127,108 +129,6 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildInputField(IconData icon, String hint) {
-    return TextField(
-      style: TextStyle(
-        fontFamily: 'Raleway',
-        fontWeight: FontWeight.w500, // Medium
-        fontSize: 18,
-        color: Color.fromRGBO(33, 78, 62, 1.0), // Color del texto ingresado
-      ),
-
-      decoration: InputDecoration(
-        prefixIcon: Icon(
-          icon,
-          color: Color.fromRGBO(33, 78, 62, 1.0),
-        ), // Icono verde
-        hintText: hint,
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(33, 78, 62, 1.0), // Color del hint (verde)
-          fontFamily: 'Raleway',
-          fontWeight: FontWeight.w500,
-          fontSize: 18,
-        ),
-        border: UnderlineInputBorder(),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.teal), // Color de la línea
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.teal, width: 2),
-        ),
-      ),
-    );
-  }
-}
-
-Widget _buildButton1(String label, VoidCallback onPressed) {
-  return Container(
-    width: 300,
-    height: 45,
-    decoration: BoxDecoration(
-     // borderRadius: BorderRadius.circular(25),
-      boxShadow: [
-        BoxShadow(
-          color: Color.fromRGBO(0, 0, 0, 0.15), // Sombra suave
-          offset: Offset(0, 6),
-          blurRadius: 8,
-          spreadRadius: -4,
-        ),
-      ],
-    ),
-
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.teal,
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      ),
-      onPressed: onPressed,
-      child: Text(label, style: const TextStyle(fontSize: 18)),
-    ),
-    
-  );
-}
-
-
-
-Widget _buildButtonn2(String label, VoidCallback onPressed) {
-  return Container(
-    width: 300,
-    height: 45,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(25),
-      boxShadow: [
-        BoxShadow(
-          color: Color.fromRGBO(0, 0, 0, 0.10), // Sombra suave
-          offset: Offset(0, 8),
-          blurRadius: 8,
-          spreadRadius: -8,
-        ),
-      ],
-    ),
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.teal,
-        elevation: 4,
-        shadowColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-          side: BorderSide(color: Color.fromRGBO(242, 242, 242, 1.0), width: 3),
-          ),
-        
-      ),
-      onPressed: onPressed,
-      child: Text(label, style: const TextStyle(
-        fontSize: 18, 
-        fontWeight: FontWeight.bold,
-          fontFamily: 'Raleway',
-        )
-        ),
-    ),
-  );
 }
 
 

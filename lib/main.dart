@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:syndra_app/login/login_screen.dart';
 import 'package:syndra_app/intros/intro1.dart';
 import 'package:syndra_app/intros/intro2.dart';
 import 'package:syndra_app/intros/intro3.dart';
+import 'package:syndra_app/login/login_screen.dart';
+import 'package:syndra_app/login/registro.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/intro1': (context) => const Intro1(),
         '/intro2': (context) => const Intro2(),
         '/intro3': (context) => const Intro3(),
+        '/registro': (context) => const RegistroScreen(),
       },
     );
   }
