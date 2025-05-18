@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:syndra_app/botones_base/boton_elevado.dart';
+import 'package:syndra_app/botones_base/boton_fantasma.dart';
 import 'registro.dart'; // Para navegar desde el botón
+
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -91,24 +94,23 @@ class LoginScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                child: _buildButton1('Ingreso', () {
-                                  // Acción de login
-                                }),
+
+                              BotonElevado(
+                                label: 'Ingresar',
+                                onPressed: () {
+                                  // Acción
+                                },
                               ),
+
 
                               SizedBox(height: 20),
 
-                              Container(
-                                child: _buildButtonn2('Registro', () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => const RegistroScreen(),
-                                    ),
-                                  );
-                                }),
+                              BotonFantasma(
+                                label: 'Registro', 
+                                onPressed: () {
+                                  //aqui va  conexion
+                                  
+                                },
                               ),
                             ],
                           ),
@@ -228,3 +230,5 @@ Widget _buildButtonn2(String label, VoidCallback onPressed) {
     ),
   );
 }
+
+
