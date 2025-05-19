@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/login/cajas.dart';
+import 'package:syndra_app/data/connection.dart';
 
 class RegistroScreen extends StatelessWidget {
   const RegistroScreen({super.key});
@@ -100,9 +101,23 @@ class RegistroScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.only(top: 20),
                           margin: const EdgeInsets.only(top: 25),
-                          child: BotonElevado(label: 'Guardar', onPressed: () {}
-                                ),
+                          child: BotonElevado(
+                          label: 'Guardar', // Add the required positional argument here
+                          onPressed: () async{
+                            var data = {
+                              'nombre': 'Nombre',
+                              'edad': 'Edad',
+                              'email': 'Email',
+                              'usuario': 'Usuario',
+                              'contraseña': 'Contraseña',
+                            };
+                            await MongoDatabase.insert(data);
+                          },
                         ),
+                        ),
+
+
+
                             ],
                           ), 
                         ),
