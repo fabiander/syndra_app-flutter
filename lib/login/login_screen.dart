@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
+import 'package:syndra_app/data/connection.dart';
 import 'package:syndra_app/login/cajas.dart';
 //import 'package:syndra_app/login/registro.dart';
 // Para navegar desde el botón
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  // Controladores para capturar texto
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Liberar recursos
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(163, 217, 207, 1.0)),
-
 
         child: Stack(
           children: [
@@ -71,13 +88,10 @@ class LoginScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              
-                              SizedBox(
-                                width: 400,
-                                child: cajastexto(
-                                 icon:  Icons.email,
-                                  'Correo electrónico',
-                                ),
+                              cajastexto(
+                                icon: Icons.email,
+                                'Correo electrónico',
+                                controller: emailController,
                               ),
 
                               SizedBox(height: 10),
@@ -86,6 +100,7 @@ class LoginScreen extends StatelessWidget {
                                 child: cajastexto(
                                   icon: Icons.lock,
                                   'Contraseña',
+                                  controller: passwordController,
                                 ),
                               ),
                             ],
@@ -101,8 +116,43 @@ class LoginScreen extends StatelessWidget {
                             children: [
                               BotonElevado(
                                 label: 'Ingresar',
-                                onPressed: () {
-                                  // Acción
+                                onPressed: () async {
+                                  final email = emailController.text.trim();
+                                  final contrasena =
+                                      passwordController.text.trim();
+
+                                  if (email.isEmpty || contrasena.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Por favor ingrese correo y contraseña',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  final user = await MongoDatabase.findUser(
+                                    email,
+                                    contrasena,
+                                  );
+
+                                  if (user != null) {
+                                    // Usuario encontrado, navega a la siguiente pantalla
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/intro1',
+                                    ); // Cambia '/home' por tu ruta real
+                                  } else {
+                                    // Usuario no encontrado, muestra aviso
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Usuario no registrado. Por favor regístrese.',
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 },
                               ),
 
@@ -130,5 +180,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-
-
