@@ -121,13 +121,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                   final contrasena =
                                       passwordController.text.trim();
 
+                                  // Validar campos vacíos
                                   if (email.isEmpty || contrasena.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Por favor ingrese correo y contraseña',
-                                        ),
-                                      ),
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Row(
+                                            children: const [
+                                              Icon(
+                                                Icons.warning_amber_rounded,
+                                                color: Colors.orange,
+                                              ),
+                                              SizedBox(width: 10),
+
+                                              Text('Campos vacíos'),
+                                            ],
+                                          ),
+                                          content: const Text(
+                                            'Por favor ingresa correo y contraseña.',
+                                          ),
+
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                emailController.clear();
+                                                passwordController.clear();
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Aceptar'),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                     return;
                                   }
@@ -140,17 +166,42 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (user != null) {
                                     // Usuario encontrado, navega a la siguiente pantalla
                                     Navigator.pushReplacementNamed(
+                                      // ignore: use_build_context_synchronously
                                       context,
                                       '/intro1',
-                                    ); // Cambia '/home' por tu ruta real
+                                    );
                                   } else {
-                                    // Usuario no encontrado, muestra aviso
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Usuario no registrado. Por favor regístrese.',
-                                        ),
-                                      ),
+                                    // Usuario no encontrado, mostrar AlertDialog
+                                    await showDialog(
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Row(
+                                            children: const [
+                                              Icon(
+                                                Icons.person_off,
+                                                color: Colors.redAccent,
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text('Usuario no encontrado'),
+                                            ],
+                                          ),
+                                          content: const Text(
+                                            'Usuario no registrado. Por favor regístrate.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                emailController.clear();
+                                                passwordController.clear();
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Aceptar'),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   }
                                 },
