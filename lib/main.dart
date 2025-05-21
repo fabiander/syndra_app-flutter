@@ -5,7 +5,7 @@ import 'package:syndra_app/intros/intro2.dart';
 import 'package:syndra_app/intros/intro3.dart';
 import 'package:syndra_app/login/login_screen.dart';
 import 'package:syndra_app/login/registro.dart';
-
+import 'package:syndra_app/mainmenu/menu.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MongoDatabase.connect(); // conecta con la base
@@ -21,13 +21,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginScreen(),
+      home: Menu(),
 
       routes: {
         '/intro1': (context) => const Intro1(),
         '/intro2': (context) => const Intro2(),
         '/intro3': (context) => const Intro3(),
         '/registro': (context) => const RegistroScreen(),
+        '/menu': (context) => const Menu(),
       },
     );
   }

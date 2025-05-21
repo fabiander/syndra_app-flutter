@@ -148,6 +148,8 @@ class _RegistroScreenState extends State<RegistroScreen> {
                                       email.isEmpty ||
                                       usuario.isEmpty ||
                                       contrasena.isEmpty) {
+
+                                    // Mostrar ventana de advertencia
                                     await showDialog(
                                       context: context,
                                       builder: (context) {

@@ -3,6 +3,8 @@ import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
 import 'package:syndra_app/data/connection.dart';
 import 'package:syndra_app/login/cajas.dart';
+
+
 //import 'package:syndra_app/login/registro.dart';
 // Para navegar desde el botón
 
@@ -168,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Navigator.pushReplacementNamed(
                                       // ignore: use_build_context_synchronously
                                       context,
-                                      '/intro1',
+                                      '/menu',
                                     );
                                   } else {
                                     // Usuario no encontrado, mostrar AlertDialog
