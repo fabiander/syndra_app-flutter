@@ -6,8 +6,7 @@ class SurveyOverlay extends StatefulWidget {
   final VoidCallback
   onSurveyCompleted; // Callback para cuando la encuesta termine
 
-  const SurveyOverlay({Key? key, required this.onSurveyCompleted})
-    : super(key: key);
+  const SurveyOverlay({super.key, required this.onSurveyCompleted});
 
   @override
   State<SurveyOverlay> createState() => _SurveyOverlayState();
@@ -185,7 +184,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                                 ),
                               ),
                             );
-                          }).toList(),
+                          }),
                           // Botón siguiente (opcional, si no quieres que elijas la opción para avanzar)
                           // if (_currentPage < _questions.length - 1)
                           //   const SizedBox(height: 20),

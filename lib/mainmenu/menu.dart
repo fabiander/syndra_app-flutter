@@ -26,7 +26,8 @@ class _HomeMenuScreenState extends State<Menu> {
   double _appBarAndPaddingHeight = 0.0;
 
   // Controlador para el SingleChildScrollView
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController =
+      ScrollController(); // movimento  con el dedo hacia arriba  logica
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _HomeMenuScreenState extends State<Menu> {
           MediaQuery.of(context).padding.top + AppBar().preferredSize.height;
 
       if (!_hasCompletedSurvey) {
-        _showSurveyInitialDialog();
+        _showSurveyInitialDialog(); //logica  de inicio de la encuesta, y mostrar contadores
       } else {
         setState(() {
           _showCountersScreen = true;
@@ -53,23 +54,29 @@ class _HomeMenuScreenState extends State<Menu> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController.dispose(); // incio para el desplazamiento
     super.dispose();
   }
 
   void _showSurveyInitialDialog() {
+    // inicio encuesta
     if (_hasCompletedSurvey) {
       return;
     }
 
     setState(() {
       _isSurveyActive = true;
-    });
+    }); // logica  para mostrar la encuesta
 
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Color.fromRGBO(
+        63,
+        140,
+        112,
+        0.5,
+      ), // COLOR DEL DESENFOQUE  CUANDO  SE HACE LA  ENCUESTA
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (
         BuildContext buildContext,
@@ -85,6 +92,7 @@ class _HomeMenuScreenState extends State<Menu> {
               _showCountersScreen = true;
             });
             ScaffoldMessenger.of(context).showSnackBar(
+              //barra pequeña  de encuesta completada
               const SnackBar(content: Text('¡Encuesta completada!')),
             );
           },
@@ -117,30 +125,40 @@ class _HomeMenuScreenState extends State<Menu> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromRGBO(163, 217, 207, 1.0), // fondo app bar
         elevation: 0,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black54),
+              icon: const Icon(
+                Icons.menu,
+                color: Color.fromRGBO(33, 78, 62, 1.0),
+              ),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
             );
           },
         ),
+
         title: const Text(
+          //  texto app bar top
           'Marihuana',
           style: TextStyle(
-            color: Color(0xFF6B45A8),
+            color: Color.fromRGBO(33, 78, 62, 1.0),
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
+
         centerTitle: true,
+
         actions: [
           IconButton(
-            icon: const Icon(Icons.person, color: Colors.black54),
+            icon: const Icon(
+              Icons.person,
+              color: Color.fromRGBO(33, 78, 62, 1.0),
+            ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Perfil presionado')),
@@ -149,16 +167,28 @@ class _HomeMenuScreenState extends State<Menu> {
           ),
         ],
       ),
+
       drawer: const Drawer(child: Center(child: Text('Menú Lateral (Drawer)'))),
+
       body: Stack(
         children: [
-          // 1. Imagen de fondo principal (img_media.png)
           Positioned.fill(
-            child: Image.asset(
-              'assets/img_media.png', // Asegúrate de que esta imagen esté en tu carpeta assets
-              fit: BoxFit.cover,
+            child: Container(
+              color: Color.fromRGBO(
+                163,
+                217,
+                207,
+                1.0,
+              ), // <-- Este es el color de fondo
             ),
-          ),
+          ), // Color de fondo principal
+          // 1. Imagen de fondo principal (img_media.png)
+          //Positioned.fill(
+          // child: Image.asset(
+          // 'assets/img_media.png', // Asegúrate de que esta imagen esté en tu carpeta assets
+          // fit: BoxFit.cover,
+          //  ),
+          //),
 
           // 2. El único SingleChildScrollView que contendrá todo
           Positioned.fill(

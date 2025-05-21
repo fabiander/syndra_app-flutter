@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class CountersCarousel extends StatefulWidget {
-  const CountersCarousel({Key? key}) : super(key: key);
+  const CountersCarousel({super.key});
 
   @override
   State<CountersCarousel> createState() => _CountersCarouselState();
@@ -35,10 +35,14 @@ class _CountersCarouselState extends State<CountersCarousel> {
           MediaQuery.of(context).size.height *
           0.55, // Ajusta la altura del carrusel según la imagen
       decoration: BoxDecoration(
-        color: const Color(
-          0xFFC8E6C9,
+        color: const Color.fromRGBO(
+          163,
+          217,
+          207,
+          1.0,
         ), // Color de fondo verde muy claro similar a la imagen
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(0),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -104,12 +108,12 @@ class _CountersCarouselState extends State<CountersCarousel> {
 }
 
 class _TimeCountersScreen extends StatelessWidget {
-  const _TimeCountersScreen({Key? key}) : super(key: key);
+  const _TimeCountersScreen();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(35.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -118,16 +122,23 @@ class _TimeCountersScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.white, // Texto blanco como en la imagen
+              color: Color.fromRGBO(
+                33,
+                78,
+                62,
+                1.0,
+              ), // Texto blanco como en la imagen
             ),
             textAlign: TextAlign.center,
           ),
+
           const SizedBox(height: 20),
           _buildCounterRow(
             label: '1 día',
             value: 1.0,
             barColor: Colors.pinkAccent,
           ), //
+
           const SizedBox(height: 15),
           _buildCounterRow(
             label: '8 horas',
