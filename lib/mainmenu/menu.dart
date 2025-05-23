@@ -6,6 +6,11 @@ import 'dart:ui'; // Necesario para BackdropFilter
 import 'package:syndra_app/survey/survey_overlay.dart';
 // Importa el nuevo widget de contadores
 import 'package:syndra_app/contadores/counters_carousel.dart';
+import 'package:syndra_app/mainmenu/stylestexto.dart';
+import 'package:syndra_app/botones_base/boton_elevado.dart';
+import 'package:syndra_app/mainmenu/cajaaviso.dart';
+
+
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -34,7 +39,7 @@ class _HomeMenuScreenState extends State<Menu> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _appBarAndPaddingHeight =
-          MediaQuery.of(context).padding.top + AppBar().preferredSize.height;
+          MediaQuery.of(context).padding.top + AppBar().preferredSize.height;  //  se actualiza el valor  de  arriba d ela barra, automatico
 
       if (!_hasCompletedSurvey) {
         _showSurveyInitialDialog(); //logica  de inicio de la encuesta, y mostrar contadores
@@ -91,10 +96,10 @@ class _HomeMenuScreenState extends State<Menu> {
               _hasCompletedSurvey = true;
               _showCountersScreen = true;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
+            //ScaffoldMessenger.of(context).showSnackBar(
               //barra pequeña  de encuesta completada
-              const SnackBar(content: Text('¡Encuesta completada!')),
-            );
+             // const SnackBar(content: Text('¡Encuesta completada!')),
+           // );
           },
         );
       },
@@ -103,24 +108,22 @@ class _HomeMenuScreenState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenHeight = MediaQuery.of(context).size.height; // conoce todo  el tamaño de la pantalla
     final double bottomNavBarHeight =
-        kBottomNavigationBarHeight; // Altura estándar de la BottomNavigationBar
+        kBottomNavigationBarHeight; // Altura estándar de la Barra inferior
 
     // La altura del "carril" superior donde queremos que se muestren los contadores.
     // Esto es la mitad superior de la pantalla, menos el AppBar.
     final double topHalfScreenHeight =
         (screenHeight * 0.5) - _appBarAndPaddingHeight;
 
-    // Calculamos el espacio inicial que debe tener el SizedBox antes de los contadores.
-    // Si los contadores deben ocupar 'topHalfScreenHeight', y ellos mismos tienen '_countersHeight',
-    // entonces el SizedBox debe ser la diferencia.
-    final double initialSizedBoxHeight = topHalfScreenHeight - _countersHeight;
+    
+    final double initialSizedBoxHeight = topHalfScreenHeight - _countersHeight; // esta widget es el de abajo encima esta el carrusel de contadores , esat  variable  reune el sisexbox
 
     // Aseguramos que el SizedBox no tenga una altura negativa si topHalfScreenHeight es menor que _countersHeight.
     // Aunque idealmente topHalfScreenHeight debería ser suficiente para _countersHeight.
     final double finalInitialSizedBoxHeight =
-        initialSizedBoxHeight > 0 ? initialSizedBoxHeight : 0;
+        initialSizedBoxHeight > 0 ? initialSizedBoxHeight : 0;// zisexbox  de abajo
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -157,7 +160,7 @@ class _HomeMenuScreenState extends State<Menu> {
           IconButton(
             icon: const Icon(
               Icons.person,
-              color: Color.fromRGBO(33, 78, 62, 1.0),
+              color: Color.fromRGBO(33, 78, 62, 1.0), // icono del perfil
             ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -194,7 +197,7 @@ class _HomeMenuScreenState extends State<Menu> {
           Positioned.fill(
             top:
                 _appBarAndPaddingHeight, // El scrollable comienza justo debajo del AppBar
-            child: SingleChildScrollView(
+            child: SingleChildScrollView( // este nos ayuda  a  desplazarnos con el dedo
               controller: _scrollController,
               child: Column(
                 children: [
@@ -210,6 +213,8 @@ class _HomeMenuScreenState extends State<Menu> {
                       height: _countersHeight, // Altura fija para el carrusel
                       child: const CountersCarousel(),
                     ),
+
+
 
                   // El Contenedor blanco del menú, que ahora está DENTRO del SingleChildScrollView
                   Container(
@@ -229,34 +234,45 @@ class _HomeMenuScreenState extends State<Menu> {
                               ) // Borde redondeado
                               : BorderRadius.zero,
                     ),
+
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Text(
                           'Por qué estoy haciendo esto',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey.shade700,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: menuSectionTitleStyle
                         ),
+                        
                         const SizedBox(height: 15),
-                        _buildLargeTextButton(
-                          text: 'Por mi madre',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Botón "Por mi madre" presionado',
-                                ),
-                              ),
-                            );
-                          },
-                          backgroundColor: const Color(0xFF6B45A8),
-                          textColor: Colors.white,
-                        ),
+
+
+                        //  llamando a CajaAvisoEstiloBoton
+                        CajaAvisoEstiloBoton(
+                          text: 'Por mi madre', // Propiedad 'text'
+                          backgroundColor: const Color.fromRGBO(
+                            163,
+                            217,
+                            207,
+                            1.0,
+                          ), 
+                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold, 
+                          boxShadow: [
+                            // Sombra personalizada 
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ), 
+
+
+
                         const SizedBox(height: 30),
+
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 10),
                           padding: const EdgeInsets.symmetric(
@@ -264,7 +280,7 @@ class _HomeMenuScreenState extends State<Menu> {
                             horizontal: 15.0,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF6B45A8),
+                            color:  Color.fromRGBO(33, 78, 62, 1.0),
                             borderRadius: BorderRadius.circular(25),
                             boxShadow: [
                               BoxShadow(
@@ -275,6 +291,9 @@ class _HomeMenuScreenState extends State<Menu> {
                               ),
                             ],
                           ),
+
+
+
                           child: Column(
                             children: [
                               Container(
