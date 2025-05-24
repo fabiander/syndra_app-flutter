@@ -7,10 +7,14 @@ import 'package:syndra_app/survey/survey_overlay.dart';
 // Importa el nuevo widget de contadores
 import 'package:syndra_app/contadores/counters_carousel.dart';
 import 'package:syndra_app/mainmenu/stylestexto.dart';
-import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/mainmenu/cajaaviso.dart';
 // Importa el nuevo widget de la animación
-import 'package:syndra_app/mainmenu/animacioncaja.dart'; // <--- ¡Nuevo import!
+import 'package:syndra_app/mainmenu/animacioncaja.dart'; //<--- ¡Nuevo import!
+import 'package:syndra_app/botones_base/boton_elevado.dart';
+import 'package:syndra_app/botones_base/boton_fantasma.dart';
+import 'package:syndra_app/tarjetas/aceptar.dart';
+import 'package:syndra_app/tarjetas/admitirproblema.dart';
+import 'package:syndra_app/tarjetas/reconocimiento.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -193,7 +197,7 @@ class _HomeMenuScreenState extends State<Menu> {
                               : BorderRadius.zero,
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Text(
                           'Por qué estoy haciendo esto',
@@ -222,69 +226,92 @@ class _HomeMenuScreenState extends State<Menu> {
                             ),
                           ],
                         ),
+
                         const SizedBox(height: 30),
 
                         // --- CONTAINER ANIMADO AHORA ES UN WIDGET SEPARADO ---
                         const AnimatedInfoBox(), // ¡Aquí lo usamos!
-
                         // --- FIN CONTAINER ANIMADO ---
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 40),
 
-
-                        _buildMenuButton(
-                          text: 'Admitir que tienes un problema',
+                        BotonElevado(
+                          label: 'Admitir un problema',
+                          backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
+                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
                           onPressed: () {
                             if (!_hasCompletedSurvey) {
                               _showSurveyInitialDialog();
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Ya has completado la encuesta.',
-                                  ),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) =>
+                                          const AdmitirProblemaScreen(),
                                 ),
                               );
                             }
                           },
                         ),
 
+                        const SizedBox(height: 30),
+
+                        BotonElevado(    //  SE llama  el archivo  boton  que  ya  tiene  suus  propiedades
+                          label: 'Reconoce tu problema',
+                          backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
+                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Reconocimiento(),
+                              ),
+                            );
+                          },
+                        ),
+
+
+                        const SizedBox(height: 30),
+
+                        BotonElevado(
+                          label: 'Aceptar la adicción',
+                          backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
+                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Aceptar(),
+                              ),
+                            );
+                          },
+                        ),
+
+
+                        const SizedBox(height: 30),
+
+
 
                         
-                        const SizedBox(height: 15),
-                        _buildMenuButton(
-                          text: 'Reconoce tu problema',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Reconoce tu problema presionado',
+                          
+                          BotonElevado(
+                            label: 'Vamos a la práctica',
+                            backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
+                            textColor: Color.fromRGBO(33, 78, 62, 1.0),
+
+                            
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Vamos a la práctica presionado'),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                        _buildMenuButton(
-                          text: 'Aceptar la adicción',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Aceptar la adicción presionado'),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                        _buildMenuButton(
-                          text: 'Vamos a la práctica',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Vamos a la práctica presionado'),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            },
+                          ),
+                        
+
+
+
                         SizedBox(
                           height:
                               screenHeight -

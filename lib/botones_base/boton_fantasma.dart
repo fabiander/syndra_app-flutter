@@ -15,7 +15,7 @@ class BotonFantasma extends StatelessWidget {
     this.textColor = const Color.fromRGBO(33, 78, 62, 1.0),
     this.borderColor = const Color.fromRGBO(255, 255, 255, 1.0),
     this.backgroundColor = Colors.transparent,
-    this.withShadow = false,
+    this.withShadow = true,
     required this.onPressed,
   });
 
@@ -29,14 +29,16 @@ class BotonFantasma extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: borderColor, width: 2),
-        boxShadow:[
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.15),
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                    spreadRadius: -4,
-                  ),
-                ],
+        boxShadow: withShadow
+            ? [
+                BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.10),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                  spreadRadius: -4,
+                ),
+              ]
+            : [],
       ),
 
 

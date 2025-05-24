@@ -1,6 +1,5 @@
 // lib/mainmenu/animated_info_box.dart
 import 'package:flutter/material.dart';
-import 'package:syndra_app/mainmenu/stylestexto.dart';
 
 class AnimatedInfoBox extends StatefulWidget {
   const AnimatedInfoBox({super.key});
