@@ -1,21 +1,34 @@
 name: syndra_app
 description: "A new Flutter project."
 
-publish_to: 'none' 
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.2
+  # ¡IMPORTANTE! Ajusta esto para que coincida con tu versión de Dart actual (3.8.0)
+  # Esto le dice a Flutter que tu proyecto es compatible con Dart 3.8.0 o superior, pero menor a 4.0.0.
+  sdk: ">=3.8.0 <4.0.0"
+  # También puedes eliminar esta línea si no la necesitas, ya que el SDK de Dart suele ser suficiente:
+  # flutter: ">=3.7.0 <4.0.0"
 
 
 dependencies:
   flutter:
     sdk: flutter
 
-
   cupertino_icons: ^1.0.8
-
   mongo_dart: ^0.10.0
+  fl_chart: ^0.68.0
+  # Ya no necesitas esta línea comentada
+  #youtube_player_flutter: ^8.1.2
+  # Esta línea está bien:
+  youtube_player_flutter: ^9.1.1
+
+  # ¡IMPORTANTE! Cambia esta versión para que sea compatible con youtube_player_flutter ^9.1.1
+  # y para evitar el error de "Namespace not specified" con tu Flutter moderno.
+  flutter_inappwebview: ^6.1.5 # <--- Sugiero ^6.1.5 (la última disponible que vimos)
+                               # Si ^6.1.5 da problemas, puedes probar con ^6.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -29,4 +42,3 @@ flutter:
 
   assets:
     - assets/images/
- 

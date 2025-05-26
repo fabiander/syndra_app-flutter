@@ -7,6 +7,8 @@ class BotonElevado extends StatelessWidget {
   final double elevation;
   final VoidCallback onPressed;
   final List<BoxShadow>? sombraPersonalizada;
+  final double width;
+  final double height;
 
   const BotonElevado({
     super.key,
@@ -16,59 +18,52 @@ class BotonElevado extends StatelessWidget {
     this.elevation = 4.0,
     required this.onPressed,
     this.sombraPersonalizada,
+    this.width = 350,
+    this.height = 50,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 50,
-      
+      width: width,
+      height: height,
       decoration: BoxDecoration(
-        boxShadow:[
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.15),
-                offset: Offset(0, 6),
-                blurRadius: 8,
-                spreadRadius: -4,
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.15),
+            offset: Offset(0, 6),
+            blurRadius: 8,
+            spreadRadius: -4,
+          ),
+        ],
         borderRadius: BorderRadius.circular(25),
       ),
-
-
       child: ElevatedButton(
         style: ButtonStyle(
-
           backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
             if (states.contains(WidgetState.pressed)) {
-              return Color.fromRGBO(33, 78, 62, 1.0);         
+              return const Color.fromRGBO(33, 78, 62, 1.0);
             }
-            return backgroundColor; 
+            return backgroundColor;
           }),
-
-           foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+          foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
             if (states.contains(WidgetState.pressed)) {
-              return Colors.white; // texto cuando se presiona
+              return Colors.white;
             }
-            return textColor; // texto por defecto
+            return textColor;
           }),
-
           elevation: WidgetStateProperty.all(elevation),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           ),
         ),
-        
         onPressed: onPressed,
-
         child: Text(
           label,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
             fontFamily: 'Raleway',
-            //color: textColor,
           ),
         ),
       ),

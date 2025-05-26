@@ -48,10 +48,12 @@ class _RegistroScreenState extends State<RegistroScreen> {
             Align(
               alignment: Alignment.topCenter,
               child: SingleChildScrollView(
+                // Permite desplazamiento
                 child: Container(
                   width: 340,
                   height: 700,
                   margin: const EdgeInsets.only(top: 95),
+
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(
@@ -69,7 +71,9 @@ class _RegistroScreenState extends State<RegistroScreen> {
                         width: 300,
                         margin: const EdgeInsets.only(top: 20),
                         padding: const EdgeInsets.all(10),
+
                         child: Column(
+                          //  formulario de campos de texto
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
 
@@ -126,45 +130,115 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             Container(
                               padding: const EdgeInsets.only(top: 20),
                               margin: const EdgeInsets.only(top: 25),
+
                               child: BotonElevado(
                                 label: 'Guardar',
 
                                 onPressed: () async {
+                                  var nombre = nombreController.text.trim();
+                                  var edadTexto = edadController.text.trim();
+                                  var email = emailController.text.trim();
+                                  var usuario = usuarioController.text.trim();
+                                  var contrasena =
+                                      contrasenaController.text.trim();
+                                  // Validar campos vacíos
+
+                                  if (nombre.isEmpty ||
+                                      edadTexto.isEmpty ||
+                                      email.isEmpty ||
+                                      usuario.isEmpty ||
+                                      contrasena.isEmpty) {
+
+                                    // Mostrar ventana de advertencia
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Row(
+                                            children: const [
+                                              Icon(
+                                                Icons.warning_amber_rounded,
+                                                color: Colors.orange,
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text('Espacios incompletos'),
+                                            ],
+                                          ),
+                                          content: const Text(
+                                            'Por favor, llena todos los campos antes de guardar.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                // Limpia las cajas y cierra la ventana
+                                                nombreController.clear();
+                                                edadController.clear();
+                                                emailController.clear();
+                                                usuarioController.clear();
+                                                contrasenaController.clear();
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Aceptar'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    return;
+                                  }
+
                                   var data = {
-                                    'nombre': nombreController.text.trim(),
-                                    'edad':
-                                        int.tryParse(
-                                          edadController.text.trim(),
-                                        ) ??
-                                        0, // <-- conversión a int
-                                    'email': emailController.text.trim(),
-                                    'usuario': usuarioController.text.trim(),
-                                    'contrasena':
-                                        contrasenaController.text.trim(),
+                                    'nombre': nombre,
+                                    'edad': int.tryParse(edadTexto) ?? 0,
+                                    'email': email,
+                                    'usuario': usuario,
+                                    'contrasena': contrasena,
                                   };
 
                                   try {
-                                    print('Intentando insertar: $data');
                                     await MongoDatabase.insert(data);
-                                    print('Insert exitoso');
-                                    nombreController.clear();
-                                    edadController.clear();
-                                    emailController.clear();
-                                    usuarioController.clear();
-                                    contrasenaController.clear();
+                                    // Mostrar ventana de éxito con ícono
+                                    await showDialog(
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Row(
+                                            children: const [
+                                              Icon(
+                                                Icons.check_circle,
+                                                color: Colors.green,
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text('Registro guardado'),
+                                            ],
+                                          ),
 
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Registro guardado'),
-                                      ),
+                                          content: const Text(
+                                            'Los datos se guardaron correctamente en la base de datos.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                nombreController.clear();
+                                                edadController.clear();
+                                                emailController.clear();
+                                                usuarioController.clear();
+                                                contrasenaController.clear();
+
+                                                Navigator.of(context).pop();
+                                              },
+
+                                              child: const Text('Aceptar'),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   } catch (e) {
+                                    // Puedes agregar otra ventana para errores de conexión o similares
+                                    // ignore: avoid_print
                                     print('Error al insertar: $e');
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Error al guardar: $e'),
-                                      ),
-                                    );
                                   }
                                 },
                               ),

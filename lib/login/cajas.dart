@@ -11,6 +11,7 @@ Widget cajastexto(
       bool obscureText = isPassword;
 
       return TextField(
+        //  el campo   qu  recibe  el texto de entrada
         controller: controller,
         obscureText: obscureText,
         style: const TextStyle(
@@ -19,7 +20,9 @@ Widget cajastexto(
           fontSize: 18,
           color: Color.fromRGBO(33, 78, 62, 1.0),
         ),
+
         decoration: InputDecoration(
+          // el campo dondo se muestra el icono y el texto en verde
           prefixIcon:
               icon != null
                   ? Icon(icon, color: Color.fromRGBO(33, 78, 62, 1.0))
@@ -31,15 +34,17 @@ Widget cajastexto(
             fontWeight: FontWeight.w500,
             fontSize: 18,
           ),
-          border: const UnderlineInputBorder(),
+
+          border: const UnderlineInputBorder(), //  linea de abajo del campo
           enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.teal),
           ),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.teal, width: 2),
           ),
+
           suffixIcon:
-              isPassword
+              isPassword //  si el campo es de contraseña, se muestra el icono de ojo
                   ? IconButton(
                     icon: Icon(
                       obscureText ? Icons.visibility_off : Icons.visibility,
