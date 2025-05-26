@@ -288,6 +288,7 @@ class _HomeMenuScreenState extends State<Menu> {
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              // ignore: deprecated_member_use
               child: Container(color: Colors.black.withOpacity(0.1)),
             ),
           ),

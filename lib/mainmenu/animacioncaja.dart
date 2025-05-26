@@ -46,6 +46,7 @@ class _AnimatedInfoBoxState extends State<AnimatedInfoBox>
           spreadRadius: -3,
         ),
       ],
+      // ignore: deprecated_member_use
       border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
     );
 
@@ -70,14 +71,11 @@ class _AnimatedInfoBoxState extends State<AnimatedInfoBox>
         padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
         height: 250, // <--- ALTURA DEL WIDGET PRINCIPAL (AnimatedInfoBox)
 
-
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.center, // centrado verticall
+          mainAxisAlignment: MainAxisAlignment.center, // centrado verticall
           crossAxisAlignment: CrossAxisAlignment.center, //centrado horizontal
           children: [
-
             const SizedBox(height: 8), // espacio
-
             // --- IMAGEN PNG ---
             SizedBox(
               width: 120, // Ancho de la caja
@@ -85,15 +83,15 @@ class _AnimatedInfoBoxState extends State<AnimatedInfoBox>
               child: Image.asset(
                 'assets/images/paso1.png', // Asegúrate de que esta ruta sea correcta
                 width: 42, // Ancho de la imagen (puede ser igual al contenedor)
-                height:42, // Altura de la imagen (puede ser igual al contenedor)
-                fit: BoxFit.contain, // Ajusta la imagen dentro de la caja sin recortar
+                height:
+                    42, // Altura de la imagen (puede ser igual al contenedor)
+                fit:
+                    BoxFit
+                        .contain, // Ajusta la imagen dentro de la caja sin recortar
               ),
             ),
 
-
-            
             const SizedBox(height: 12),
-
 
             const Text(
               '"No puedo, Dios puede, y dejaré que lo haga."',
@@ -108,8 +106,6 @@ class _AnimatedInfoBoxState extends State<AnimatedInfoBox>
                     FontStyle.italic, // <-- Si quieres que siga siendo itálica
               ),
             ),
-
-
           ],
         ),
       ),
