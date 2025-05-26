@@ -18,7 +18,7 @@ class BotonElevado extends StatelessWidget {
     this.elevation = 4.0,
     required this.onPressed,
     this.sombraPersonalizada,
-    this.width = 300,
+    this.width = 350,
     this.height = 50,
   });
 
@@ -40,20 +40,20 @@ class BotonElevado extends StatelessWidget {
       ),
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-            if (states.contains(MaterialState.pressed)) {
+          backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+            if (states.contains(WidgetState.pressed)) {
               return const Color.fromRGBO(33, 78, 62, 1.0);
             }
             return backgroundColor;
           }),
-          foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-            if (states.contains(MaterialState.pressed)) {
+          foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+            if (states.contains(WidgetState.pressed)) {
               return Colors.white;
             }
             return textColor;
           }),
-          elevation: MaterialStateProperty.all(elevation),
-          shape: MaterialStateProperty.all(
+          elevation: WidgetStateProperty.all(elevation),
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           ),
         ),

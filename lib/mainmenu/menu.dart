@@ -1,20 +1,29 @@
-// lib/mainmenu/menu.dart
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Necesario para BackdropFilter
-
-// Importa el nuevo widget de la encuesta
-import 'package:syndra_app/survey/survey_overlay.dart';
-// Importa el nuevo widget de contadores
+import 'dart:ui';
+import 'package:syndra_app/bar_abajo/home.dart';
+import 'package:syndra_app/bar_abajo/estadisticas.dart';
+import 'package:syndra_app/bar_abajo/donaciones.dart';
+import 'package:syndra_app/bar_abajo/llamado.dart';
+import 'package:syndra_app/bar_abajo/perfil.dart';
+import 'package:syndra_app/bar_abajo/barfondo.dart';
+import 'package:syndra_app/bar_arrriba/arriba.dart'; // <--- Asegúrate de que esta ruta sea correcta
+import 'package:syndra_app/encuesta/preguntas.dart';
 import 'package:syndra_app/contadores/counters_carousel.dart';
-import 'package:syndra_app/mainmenu/stylestexto.dart';
+import 'package:syndra_app/texto/tipoletra.dart';
 import 'package:syndra_app/mainmenu/cajaaviso.dart';
-// Importa el nuevo widget de la animación
-import 'package:syndra_app/mainmenu/animacioncaja.dart'; //<--- ¡Nuevo import!
+import 'package:syndra_app/mainmenu/animacioncaja.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
 import 'package:syndra_app/tarjetas/aceptar.dart';
-import 'package:syndra_app/tarjetas/admitirproblema.dart';
+import 'package:syndra_app/tarjetas/admitirproblema.dart' as admitir_problema;
 import 'package:syndra_app/tarjetas/reconocimiento.dart';
+import 'package:syndra_app/bar_abajo/llamado.dart';
+import 'package:syndra_app/bar_abajo/perfil.dart';
+
+
+
+// Importa tu clase MongoDatabase (descomenta cuando uses MongoDB real)
+// import 'package:syndra_app/data/connection.dart'; // <--- Asegúrate de que esta ruta sea correcta
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -24,54 +33,59 @@ class Menu extends StatefulWidget {
 }
 
 class _HomeMenuScreenState extends State<Menu> {
-  // Ya NO necesitamos TickerProviderStateMixin aquí, porque AnimatedInfoBox lo maneja
-
   bool _isSurveyActive = false;
   bool _hasCompletedSurvey = false;
   bool _showCountersScreen = false;
-
   final double _countersHeight = 350.0;
-  double _appBarAndPaddingHeight = 0.0;
-
   final ScrollController _scrollController = ScrollController();
+  int _selectedTabIndex = 0;
 
-  // --- LAS PROPIEDADES DE ANIMACIÓN HAN SIDO MOVIDAS A AnimatedInfoBox ---
-  // late final AnimationController _animationController;
-  // late final DecorationTween _decorationTween;
-  // --- FIN PROPIEDADES DE ANIMACIÓN ---
+  final String _loggedInUserName = "Fabian"; // Nombre de usuario de ejemplo
+  String _surveyInfoText = "Cargando..."; // Valor inicial para la AppBar
+
+  final fondoBoton = const Color.fromRGBO(163, 217, 207, 1.0);
+  final textoBoton = const Color.fromRGBO(33, 78, 62, 1.0);
+  final double anchoBoton = 315;
+
+  final List<Widget> _screens = [
+    Container(), // Placeholder para el índice 0: Home/tu menú principal
+    const StatsScreen(),
+    const DonationsScreen(),
+    const LlamadoScreen(),
+    const PerfilScreen(),
+  ];
 
   @override
   void initState() {
     super.initState();
+    _loadInitialData(); // Llamamos a la función para cargar datos
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _appBarAndPaddingHeight =
-          MediaQuery.of(context).padding.top + AppBar().preferredSize.height;
-
       if (!_hasCompletedSurvey) {
         _showSurveyInitialDialog();
       } else {
         setState(() {
           _showCountersScreen = true;
+          _selectedTabIndex = 0;
         });
       }
-
       _scrollController.addListener(() {
-        // Lógica de scroll
+        // Lógica de scroll si la necesitas
       });
     });
+  }
 
-    // --- LA INICIALIZACIÓN DEL CONTROLADOR Y EL TWEEN DE ANIMACIÓN SE HA MOVIDO ---
-    // _animationController = AnimationController(...);
-    // final beginDecoration = BoxDecoration(...);
-    // final endDecoration = BoxDecoration(...);
-    // _decorationTween = DecorationTween(...);
-    // --- FIN INICIALIZACIÓN ---
+  Future<void> _loadInitialData() async {
+    await Future.delayed(const Duration(seconds: 2));
+    String dataFromDatabase = "Marihuana"; // Dato simulado de la BD
+    setState(() {
+      _surveyInfoText = dataFromDatabase;
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
-    // _animationController.dispose(); // ¡Ya NO se necesita liberar aquí!
+    // MongoDatabase.close(); // Descomenta si usas MongoDB y cierras la conexión
     super.dispose();
   }
 
@@ -79,11 +93,9 @@ class _HomeMenuScreenState extends State<Menu> {
     if (_hasCompletedSurvey) {
       return;
     }
-
     setState(() {
       _isSurveyActive = true;
     });
-
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -101,6 +113,7 @@ class _HomeMenuScreenState extends State<Menu> {
               _isSurveyActive = false;
               _hasCompletedSurvey = true;
               _showCountersScreen = true;
+              _selectedTabIndex = 0;
             });
           },
         );
@@ -108,315 +121,223 @@ class _HomeMenuScreenState extends State<Menu> {
     );
   }
 
+  void _onBottomNavItemTapped(int index) {
+    setState(() {
+      _selectedTabIndex = index;
+    });
+  }
+
+  // --- NUEVA FUNCIÓN: Maneja la acción de salir de la aplicación ---
+  void _onLogout() {
+    // Aquí puedes añadir la lógica para cerrar sesión (ej. borrar token, etc.)
+    // Y luego navegar a la pantalla de inicio de sesión o cerrar la aplicación.
+
+    // Ejemplo: Mostrar un SnackBar y luego cerrar la aplicación (no recomendado sin un inicio de sesión)
+    // En una aplicación real, probablemente navegarías a una pantalla de inicio de sesión.
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Cerrando sesión...')));
+
+    // Para cerrar la aplicación completamente (no siempre deseable en Flutter)
+    // import 'dart:io'; // Necesitas importar esto al inicio del archivo
+    // exit(0);
+
+    // Más comúnmente, navegarías a la pantalla de login/bienvenida
+    Navigator.of(context).popUntil(
+      (route) => route.isFirst,
+    ); // Vuelve a la primera ruta (ej. LoginScreen)
+    // O navega a una pantalla específica:
+    // Navigator.of(context).pushAndRemoveUntil(
+    //   MaterialPageRoute(builder: (context) => const LoginScreen()), // Reemplaza LoginScreen con tu pantalla de inicio de sesión
+    //   (Route<dynamic> route) => false,
+    // );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double appBarHeight = AppBar().preferredSize.height;
+    final double totalAppBarAreaHeight = statusBarHeight + appBarHeight;
     final double bottomNavBarHeight = kBottomNavigationBarHeight;
 
-    final double topHalfScreenHeight =
-        (screenHeight * 0.5) - _appBarAndPaddingHeight;
+    final Widget homeScreenContent = Stack(
+      children: [
+        Positioned.fill(
+          child: Container(color: const Color.fromRGBO(163, 217, 207, 1.0)),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            top: totalAppBarAreaHeight,
+            bottom: bottomNavBarHeight,
+          ),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_showCountersScreen)
+                  SizedBox(
+                    height: _countersHeight,
+                    child: const CountersCarousel(),
+                  ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 20.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        _showCountersScreen
+                            ? const BorderRadius.vertical(
+                              top: Radius.circular(30),
+                            )
+                            : BorderRadius.zero,
+                  ),
+                  child: Column(
+                    //crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        'Por qué estoy haciendo esto',
+                        textAlign: TextAlign.center,
+                        style: menuSectionTitleStyle,
+                      ),
+                      const SizedBox(height: 15),
 
-    final double initialSizedBoxHeight = topHalfScreenHeight - _countersHeight;
+                      BotonFantasma(
+                        label: 'Por mi madre',
+                        borderColor: Color.fromRGBO(120, 190, 180, 1.0),
+                        onPressed: null,
+                        width: anchoBoton,
+                      ),
 
-    final double finalInitialSizedBoxHeight =
-        initialSizedBoxHeight > 0 ? initialSizedBoxHeight : 0;
+                      const SizedBox(height: 30),
+                      const AnimatedInfoBox(),
+                      const SizedBox(height: 40),
+
+                      BotonElevado(
+                        label: 'Admitir un problema',
+                        backgroundColor: fondoBoton,
+                        textColor: textoBoton,
+                        width: anchoBoton,
+                        onPressed: () {
+                          if (!_hasCompletedSurvey) {
+                            _showSurveyInitialDialog();
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => admitir_problema.AdmitirProblemaScreen(onProblemAdmitted: () {  },),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      BotonElevado(
+                        label: 'Reconoce tu problema',
+                        backgroundColor: fondoBoton,
+                        textColor: textoBoton,
+                        width: anchoBoton,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Reconocimiento(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      BotonElevado(
+                        label: 'Aceptar la adicción',
+                        backgroundColor: fondoBoton,
+                        textColor: textoBoton,
+                        width: anchoBoton,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+
+
+                            MaterialPageRoute(
+                              builder: (context) => const AdmitirProblemaScreen(
+                                onProblemAdmitted: () {
+                                  // Aquí puedes manejar la acción después de admitir el problema
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Problema admitido'),
+                                    ),
+                                  );
+                                },
+                            ),
+                          ),
+                          );
+                        },
+                      ),
+
+
+
+
+                      const SizedBox(height: 30),
+
+                      BotonElevado(
+                        label: 'Vamos a la práctica',
+                        backgroundColor: fondoBoton,
+                        textColor: textoBoton,
+                        width: anchoBoton,
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Vamos a la práctica presionado'),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+
+        if (_isSurveyActive)
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              child: Container(color: Colors.black.withOpacity(0.1)),
+            ),
+          ),
+      ],
+    );
+
+    _screens[0] = _hasCompletedSurvey ? homeScreenContent : const HomeScreen();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(163, 217, 207, 1.0),
-        elevation: 0,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(
-                Icons.menu,
-                color: Color.fromRGBO(33, 78, 62, 1.0),
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-        title: const Text(
-          'Marihuana',
-          style: TextStyle(
-            color: Color.fromRGBO(33, 78, 62, 1.0),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.person,
-              color: Color.fromRGBO(33, 78, 62, 1.0),
-            ),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Perfil presionado')),
-              );
-            },
-          ),
-        ],
+      appBar: MyAppBarWidget(
+        userName: _loggedInUserName,
+        surveyDataText: _surveyInfoText,
+        onLogoutPressed: _onLogout, // <--- Conectamos el callback aquí
       ),
+
       drawer: const Drawer(child: Center(child: Text('Menú Lateral (Drawer)'))),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(color: const Color.fromRGBO(163, 217, 207, 1.0)),
-          ),
-          Positioned.fill(
-            top: _appBarAndPaddingHeight,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  if (_showCountersScreen)
-                    SizedBox(height: finalInitialSizedBoxHeight),
-                  if (_showCountersScreen)
-                    SizedBox(
-                      height: _countersHeight,
-                      child: const CountersCarousel(),
-                    ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 20.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          _showCountersScreen
-                              ? const BorderRadius.vertical(
-                                top: Radius.circular(30),
-                              )
-                              : BorderRadius.zero,
-                    ),
-                    child: Column(
-                      //crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(
-                          'Por qué estoy haciendo esto',
-                          textAlign: TextAlign.center,
-                          style: menuSectionTitleStyle,
-                        ),
-                        const SizedBox(height: 15),
 
-                        CajaAvisoEstiloBoton(
-                          text: 'Por mi madre',
-                          backgroundColor: const Color.fromRGBO(
-                            163,
-                            217,
-                            207,
-                            1.0,
-                          ),
-                          textColor: const Color.fromRGBO(33, 78, 62, 1.0),
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromRGBO(0, 0, 0, 0.20),
-                              offset: Offset(0, 6),
-                              blurRadius: 8,
-                              spreadRadius: -4,
-                            ),
-                          ],
-                        ),
+      body: IndexedStack(index: _selectedTabIndex, children: _screens),
 
-                        const SizedBox(height: 30),
-
-                        // --- CONTAINER ANIMADO AHORA ES UN WIDGET SEPARADO ---
-                        const AnimatedInfoBox(), // ¡Aquí lo usamos!
-                        // --- FIN CONTAINER ANIMADO ---
-                        const SizedBox(height: 40),
-
-                        BotonElevado(
-                          label: 'Admitir un problema',
-                          backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
-                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
-                          onPressed: () {
-                            if (!_hasCompletedSurvey) {
-                              _showSurveyInitialDialog();
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) =>
-                                          const AdmitirProblemaScreen(),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: 30),
-
-                        BotonElevado(    //  SE llama  el archivo  boton  que  ya  tiene  suus  propiedades
-                          label: 'Reconoce tu problema',
-                          backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
-                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Reconocimiento(),
-                              ),
-                            );
-                          },
-                        ),
-
-
-                        const SizedBox(height: 30),
-
-                        BotonElevado(
-                          label: 'Aceptar la adicción',
-                          backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
-                          textColor: Color.fromRGBO(33, 78, 62, 1.0),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Aceptar(),
-                              ),
-                            );
-                          },
-                        ),
-
-
-                        const SizedBox(height: 30),
-
-
-
-                        
-                          
-                          BotonElevado(
-                            label: 'Vamos a la práctica',
-                            backgroundColor: Color.fromRGBO(163, 217, 207, 1.0),
-                            textColor: Color.fromRGBO(33, 78, 62, 1.0),
-
-                            
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Vamos a la práctica presionado'),
-                                ),
-                              );
-                            },
-                          ),
-                        
-
-
-
-                        SizedBox(
-                          height:
-                              screenHeight -
-                              _appBarAndPaddingHeight -
-                              bottomNavBarHeight -
-                              _countersHeight -
-                              300,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (_isSurveyActive)
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(color: Colors.black.withOpacity(0.1)),
-              ),
-            ),
-        ],
+      bottomNavigationBar: MyBottomNavBar(
+        currentIndex: _selectedTabIndex,
+        onTap: _onBottomNavItemTapped,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF6B45A8),
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Diario'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Progreso',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Comunidad'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-        ],
-        currentIndex: 0,
-        onTap: (index) {
-          String item = '';
-          switch (index) {
-            case 0:
-              item = 'Home';
-              break;
-            case 1:
-              item = 'Diario';
-              break;
-            case 2:
-              item = 'Progreso';
-              break;
-            case 3:
-              item = 'Comunidad';
-              break;
-            case 4:
-              item = 'Perfil';
-              break;
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Bottom Nav: $item presionado')),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildLargeTextButton({
-    required String text,
-    required VoidCallback onPressed,
-    required Color backgroundColor,
-    required Color textColor,
-  }) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 5,
-      ),
-      onPressed: onPressed,
-      child: Text(text),
-    );
-  }
-
-  Widget _buildMenuButton({
-    required String text,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF6B45A8),
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        textStyle: const TextStyle(fontSize: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-          side: BorderSide(color: Colors.grey.shade300, width: 1),
-        ),
-        elevation: 2,
-      ),
-      onPressed: onPressed,
-      child: Text(text),
     );
   }
 }

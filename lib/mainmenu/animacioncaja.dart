@@ -66,7 +66,7 @@ class _AnimatedInfoBoxState extends State<AnimatedInfoBox>
     return DecoratedBoxTransition(
       decoration: _decorationTween.animate(_animationController),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 30),
         padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
         height: 250, // <--- ALTURA DEL WIDGET PRINCIPAL (AnimatedInfoBox)
 
