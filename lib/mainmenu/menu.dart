@@ -10,17 +10,11 @@ import 'package:syndra_app/bar_arrriba/arriba.dart'; // <--- Asegúrate de que e
 import 'package:syndra_app/encuesta/preguntas.dart';
 import 'package:syndra_app/contadores/counters_carousel.dart';
 import 'package:syndra_app/texto/tipoletra.dart';
-import 'package:syndra_app/mainmenu/cajaaviso.dart';
 import 'package:syndra_app/mainmenu/animacioncaja.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
-import 'package:syndra_app/tarjetas/aceptar.dart';
-import 'package:syndra_app/tarjetas/admitirproblema.dart' as admitir_problema;
+import 'package:syndra_app/tarjetas/admitirproblema.dart';
 import 'package:syndra_app/tarjetas/reconocimiento.dart';
-import 'package:syndra_app/bar_abajo/llamado.dart';
-import 'package:syndra_app/bar_abajo/perfil.dart';
-
-
 
 // Importa tu clase MongoDatabase (descomenta cuando uses MongoDB real)
 // import 'package:syndra_app/data/connection.dart'; // <--- Asegúrate de que esta ruta sea correcta
@@ -229,7 +223,9 @@ class _HomeMenuScreenState extends State<Menu> {
                               context,
                               MaterialPageRoute(
                                 builder:
-                                    (context) => admitir_problema.AdmitirProblemaScreen(onProblemAdmitted: () {  },),
+                                    (context) => AdmitirProblemaScreen(
+                                      onProblemAdmitted: () {},
+                                    ),
                               ),
                             );
                           }
@@ -260,29 +256,8 @@ class _HomeMenuScreenState extends State<Menu> {
                         backgroundColor: fondoBoton,
                         textColor: textoBoton,
                         width: anchoBoton,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-
-
-                            MaterialPageRoute(
-                              builder: (context) => const AdmitirProblemaScreen(
-                                onProblemAdmitted: () {
-                                  // Aquí puedes manejar la acción después de admitir el problema
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Problema admitido'),
-                                    ),
-                                  );
-                                },
-                            ),
-                          ),
-                          );
-                        },
+                        onPressed: () {},
                       ),
-
-
-
 
                       const SizedBox(height: 30),
 
@@ -308,7 +283,6 @@ class _HomeMenuScreenState extends State<Menu> {
             ),
           ),
         ),
-
 
         if (_isSurveyActive)
           Positioned.fill(

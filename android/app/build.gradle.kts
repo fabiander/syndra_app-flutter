@@ -1,3 +1,5 @@
+// ESTE ES EL ARCHIVO: C:\Users\AdminSena\Documents\Proyectos_flutter\syndra_app\android\app\build.gradle.kts
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -8,7 +10,10 @@ plugins {
 android {
     namespace = "com.example.syndra_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion // <--- COMENTA O ELIMINA ESTA LÍNEA ORIGINAL si quieres
+
+    // AÑADE O ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ AQUÍ, DESPUÉS DE compileSdk
+    ndkVersion = "27.0.12077973" // <--- ¡Esta es la línea que necesitamos!
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

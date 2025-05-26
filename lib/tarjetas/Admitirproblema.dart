@@ -24,7 +24,7 @@ class _AdmitirProblemaScreenState extends State<AdmitirProblemaScreen> {
   // Puedes cambiar este ID por cualquier video de YouTube
   // Por ejemplo, para un video de youtube.com/watch?v=dQw4w9WgXcQ, el ID es dQw4w9WgXcQ
   final String _videoId =
-      'YOUR_YOUTUBE_VIDEO_ID'; // <--- ¡CAMBIA ESTO POR EL ID REAL DE TU VIDEO!
+      'L9BDFFi36J4'; // <--- ¡CAMBIA ESTO POR EL ID REAL DE TU VIDEO!
 
   @override
   void initState() {
@@ -94,87 +94,95 @@ class _AdmitirProblemaScreenState extends State<AdmitirProblemaScreen> {
         ), // Tu color oscuro de AppBar
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.blueAccent,
-              onReady: () {
-                _isPlayerReady = true;
-                print('Reproductor de YouTube listo!');
-              },
-              onEnded: (data) {
-                // Ya lo manejamos en el listener, pero puedes duplicar lógica aquí si es necesario
-                setState(() {
-                  _showContinueButton = true;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  Text(
-                    '¡Bienvenido a este viaje de auto-descubrimiento!',
-                    style: counterTitleStyle.copyWith(
-                      fontSize: 22,
-                      color: const Color.fromRGBO(33, 78, 62, 1.0),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    'Este video es el primer paso para reconocer y admitir aquello que te está desafiando. Tómate el tiempo para reflexionar sobre su mensaje.',
-                    style: menuSectionTitleStyle.copyWith(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 30),
 
-                  // Botón "Continuar" que aparece después de ver el video
-                  if (_showContinueButton) // Condición para mostrar el botón
-                    BotonElevado(
-                      label: 'Continuar en este viaje',
-                      onPressed: () {
-                        widget
-                            .onProblemAdmitted(); // Llama al callback para notificar al Home
-                        Navigator.pop(context); // Regresa al menú principal
-                      },
-                      backgroundColor: const Color.fromRGBO(
-                        33,
-                        78,
-                        62,
-                        1.0,
-                      ), // Color principal
-                      textColor: Colors.white,
-                      width: 280,
-                      height: 55,
-                    )
-                  else
-                    // Mensaje o indicador de espera si el botón aún no debe aparecer
-                    Column(
-                      children: [
-                        const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Color.fromRGBO(120, 190, 180, 1.0),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'El botón aparecerá al terminar el video...',
-                          style: menuSectionTitleStyle.copyWith(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
+      body: SingleChildScrollView(
+        child: Container(
+          color: Color.fromRGBO(163, 217, 207, 1.0),
+          child: Column(
+            // Fondo blanco para el cuerpo
+            children: [
+              YoutubePlayer(
+                controller: _controller,
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: Colors.blueAccent,
+                onReady: () {
+                  _isPlayerReady = true;
+                  print('Reproductor de YouTube listo!');
+                },
+                onEnded: (data) {
+                  // Ya lo manejamos en el listener, pero puedes duplicar lógica aquí si es necesario
+                  setState(() {
+                    _showContinueButton = true;
+                  });
+                },
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    Text(
+                      '¡Bienvenido a este viaje de auto-descubrimiento!',
+                      style: counterTitleStyle.copyWith(
+                        fontSize: 22,
+                        color: const Color.fromRGBO(33, 78, 62, 1.0),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 15),
+
+                    Text(
+                      'Este video es el primer paso para reconocer y admitir aquello que te está desafiando. Tómate el tiempo para reflexionar sobre su mensaje.',
+                      style: menuSectionTitleStyle.copyWith(fontSize: 17),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 30),
+
+                    // Botón "Continuar" que aparece después de ver el video
+                    if (_showContinueButton) // Condición para mostrar el botón
+                      BotonElevado(
+                        label: 'Continuar en este viaje',
+                        onPressed: () {
+                          widget
+                              .onProblemAdmitted(); // Llama al callback para notificar al Home
+                          Navigator.pop(context); // Regresa al menú principal
+                        },
+                        backgroundColor: const Color.fromRGBO(
+                          33,
+                          78,
+                          62,
+                          1.0,
+                        ), // Color principal
+                        textColor: Colors.white,
+                        width: 280,
+                        height: 55,
+                      )
+                    else
+                      // Mensaje o indicador de espera si el botón aún no debe aparecer
+                      Column(
+                        children: [
+                          const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color.fromRGBO(120, 190, 180, 1.0),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'El botón aparecerá al terminar el video...',
+                            style: menuSectionTitleStyle.copyWith(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
