@@ -43,6 +43,7 @@ class _CountersCarouselState extends State<CountersCarousel> {
         borderRadius: BorderRadius.circular(0),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 10,
@@ -50,7 +51,6 @@ class _CountersCarouselState extends State<CountersCarousel> {
           ),
         ],
       ),
-
 
       child: Column(
         children: [
@@ -77,7 +77,6 @@ class _CountersCarouselState extends State<CountersCarousel> {
             ),
           ),
 
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Row(
@@ -92,6 +91,7 @@ class _CountersCarouselState extends State<CountersCarousel> {
                     color:
                         _currentPage == index
                             ? const Color(0xFF6B45A8)
+                            // ignore: deprecated_member_use
                             : Colors.grey.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
@@ -141,72 +141,74 @@ class _TimeCountersScreenState extends State<_TimeCountersScreen> {
 
         return Padding(
           padding: const EdgeInsets.all(45.0),
-          
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-        
-          children: [
-            Text(
-              'He estado libre durante',
-              style: counterTitleStyle,
-              textAlign: TextAlign.center,
-            ),
-        
-        
-            const SizedBox(height: 20),
-        
-            if (totalDays > 0)
-              _buildCounterRow(
-                label: '$totalDays ${totalDays == 1 ? 'día' : 'días'}',
-                value: _timeCounter.getProgressBarValue('dias'),
-                barColor: Colors.pinkAccent,
+
+            children: [
+              Text(
+                'He estado libre durante',
+                style: counterTitleStyle,
+                textAlign: TextAlign.center,
               ),
-        
-            if (totalDays == 0 || remainingHours > 0)
-              Padding(
-                padding: EdgeInsets.only(top: totalDays > 0 ? 15.0 : 0.0),
-                child: _buildCounterRow(
-                  label:
-                      '$remainingHours ${remainingHours == 1 ? 'hora' : 'horas'}',
-                  value: _timeCounter.getProgressBarValue('horas'),
-                  barColor: Colors.purpleAccent,
+
+              const SizedBox(height: 20),
+
+              if (totalDays > 0)
+                _buildCounterRow(
+                  label: '$totalDays ${totalDays == 1 ? 'día' : 'días'}',
+                  value: _timeCounter.getProgressBarValue('dias'),
+                  barColor: Colors.pinkAccent,
                 ),
-              ),
-        
-        
-            if (totalDays == 0 && remainingHours == 0 || remainingMinutes > 0)
-              Padding(
-                padding: EdgeInsets.only(
-                  top: (totalDays > 0 || remainingHours > 0) ? 15.0 : 0.0,
+
+              if (totalDays == 0 || remainingHours > 0)
+                Padding(
+                  padding: EdgeInsets.only(top: totalDays > 0 ? 15.0 : 0.0),
+                  child: _buildCounterRow(
+                    label:
+                        '$remainingHours ${remainingHours == 1 ? 'hora' : 'horas'}',
+                    value: _timeCounter.getProgressBarValue('horas'),
+                    barColor: Colors.purpleAccent,
+                  ),
                 ),
-                child: _buildCounterRow(
-                  label:
-                      '$remainingMinutes ${remainingMinutes == 1 ? 'minuto' : 'minutos'}',
-                  value: _timeCounter.getProgressBarValue('minutos'),
-                  barColor: Colors.amber,
+
+              if (totalDays == 0 && remainingHours == 0 || remainingMinutes > 0)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: (totalDays > 0 || remainingHours > 0) ? 15.0 : 0.0,
+                  ),
+                  child: _buildCounterRow(
+                    label:
+                        '$remainingMinutes ${remainingMinutes == 1 ? 'minuto' : 'minutos'}',
+                    value: _timeCounter.getProgressBarValue('minutos'),
+                    barColor: Colors.amber,
+                  ),
                 ),
-              ),
-        
-        
-            if (totalDays == 0 && remainingHours == 0 && remainingMinutes == 0 || remainingSeconds > 0)
-              Padding(
-                padding: EdgeInsets.only(
-                  top: (totalDays > 0 || remainingHours > 0 || remainingMinutes > 0) ? 15.0 : 0.0,
+
+              if (totalDays == 0 &&
+                      remainingHours == 0 &&
+                      remainingMinutes == 0 ||
+                  remainingSeconds > 0)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top:
+                        (totalDays > 0 ||
+                                remainingHours > 0 ||
+                                remainingMinutes > 0)
+                            ? 15.0
+                            : 0.0,
+                  ),
+
+                  child: _buildCounterRow(
+                    label:
+                        '$remainingSeconds ${remainingSeconds == 1 ? 'segundo' : 'segundos'}',
+                    value: _timeCounter.getProgressBarValue('segundos'),
+                    barColor: Colors.cyanAccent,
+                  ),
                 ),
-        
-        
-                child: _buildCounterRow(
-                  label:
-                      '$remainingSeconds ${remainingSeconds == 1 ? 'segundo' : 'segundos'}',
-                  value: _timeCounter.getProgressBarValue('segundos'),
-                  barColor: Colors.cyanAccent,
-                ),
-        
-        
-              ),
-          ],
-        ),
-                ); 
+            ],
+          ),
+        );
       },
     );
   }
@@ -218,13 +220,14 @@ class _TimeCountersScreenState extends State<_TimeCountersScreen> {
   }) {
     return Row(
       children: [
-        Expanded(flex: 3,
+        Expanded(
+          flex: 3,
           child: Text(
             label,
-            style: menuSectionTitleStyle, // <--- APLICAMOS counterLabelStyle AQUÍ
+            style:
+                menuSectionTitleStyle, // <--- APLICAMOS counterLabelStyle AQUÍ
           ),
         ),
-
 
         Expanded(
           flex: 7,
@@ -233,6 +236,7 @@ class _TimeCountersScreenState extends State<_TimeCountersScreen> {
               Container(
                 height: 25,
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),

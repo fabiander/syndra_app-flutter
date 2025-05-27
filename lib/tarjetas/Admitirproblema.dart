@@ -1,4 +1,8 @@
-// lib/barfondo/admitir_problema_screen.dart
+// ignore: duplicate_ignore
+// ignore: file_names
+
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart'; // Para tu BotonElevado
@@ -53,7 +57,6 @@ class _AdmitirProblemaScreenState extends State<AdmitirProblemaScreen> {
       setState(() {
         _showContinueButton = true;
       });
-      print('Video ha terminado. Botón de continuar visible.');
     }
     // Puedes añadir más lógica aquí si quieres mostrar el botón después de un tiempo específico
     // Por ejemplo:
@@ -107,7 +110,6 @@ class _AdmitirProblemaScreenState extends State<AdmitirProblemaScreen> {
                 progressIndicatorColor: Colors.blueAccent,
                 onReady: () {
                   _isPlayerReady = true;
-                  print('Reproductor de YouTube listo!');
                 },
                 onEnded: (data) {
                   // Ya lo manejamos en el listener, pero puedes duplicar lógica aquí si es necesario

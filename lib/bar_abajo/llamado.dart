@@ -122,6 +122,7 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
               decoration: InputDecoration(
                 hintText: 'Ej: "Necesito un momento, ¿puedes hablar?"',
                 hintStyle: TextStyle(
+                  // ignore: deprecated_member_use
                   color: _secondaryButtonText.withOpacity(0.5),
                 ),
                 border: OutlineInputBorder(
@@ -133,6 +134,7 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
                   borderSide: BorderSide(color: _primaryButtonBg, width: 2),
                 ),
                 filled: true,
+                // ignore: deprecated_member_use
                 fillColor: Colors.white.withOpacity(0.9),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 15.0,

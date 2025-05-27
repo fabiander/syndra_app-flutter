@@ -106,13 +106,11 @@ class _DonationsScreenState extends State<DonationsScreen> {
         ), // Color de la flecha de retroceso
       ),
 
-      
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
             Text(
               'Ayúdanos a mantener este proyecto funcionando',
               style: counterTitleStyle.copyWith(
@@ -122,9 +120,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
               textAlign: TextAlign.center,
             ),
 
-
             const SizedBox(height: 20),
-
 
             Text(
               'Tu apoyo es fundamental para seguir ofreciendo herramientas y recursos a quienes lo necesitan.',
@@ -167,6 +163,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
               decoration: InputDecoration(
                 hintText: 'Ej: 7500.00',
                 hintStyle: TextStyle(
+                  // ignore: deprecated_member_use
                   color: _donationButtonText.withOpacity(0.5),
                 ),
                 prefixText: '\$',
@@ -180,6 +177,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   borderSide: BorderSide(color: _donationButtonText, width: 2),
                 ),
                 filled: true,
+                // ignore: deprecated_member_use
                 fillColor: Colors.white.withOpacity(0.9),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 15.0,

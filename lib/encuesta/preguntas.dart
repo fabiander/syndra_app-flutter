@@ -74,7 +74,6 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
       // Última pregunta, la encuesta ha terminado
       widget.onSurveyCompleted();
       // Opcional: Podrías enviar _userAnswers a un servicio o guardarlos aquí
-      print('Encuesta completada. Respuestas: $_userAnswers');
     }
   }
 
@@ -104,6 +103,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.black.withOpacity(0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
