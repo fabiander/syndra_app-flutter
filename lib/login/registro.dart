@@ -81,7 +81,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             SizedBox(
                               width: 300,
                               child: cajastexto(
-                                'Nombre',
+                                hint: 'Nombre',
                                 icon: Icons.person,
                                 controller: nombreController,
                               ),
@@ -91,7 +91,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             SizedBox(
                               width: 300,
                               child: cajastexto(
-                                'Edad',
+                                hint: 'Edad',
                                 icon: Icons.calendar_today,
                                 controller: edadController,
                               ),
@@ -101,7 +101,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             SizedBox(
                               width: 300,
                               child: cajastexto(
-                                'Email',
+                                hint: 'Email',
                                 icon: Icons.email,
                                 controller: emailController,
                               ),
@@ -110,21 +110,24 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             SizedBox(
                               width: 300,
                               child: cajastexto(
-                                'Usuario',
+                                hint: 'Usuario',
                                 icon: Icons.person,
                                 controller: usuarioController,
                               ),
                             ),
                             const SizedBox(height: 35),
+                            
                             SizedBox(
                               width: 300,
                               child: cajastexto(
-                                'Contraseña',
+                                hint: 'Contraseña',
                                 icon: Icons.lock,
                                 controller: contrasenaController,
                                 isPassword: true,
                               ),
                             ),
+
+                            
                             const SizedBox(height: 35),
 
                             Container(

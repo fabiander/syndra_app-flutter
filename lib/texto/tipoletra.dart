@@ -17,8 +17,7 @@ const TextStyle menuSectionTitleStyle = TextStyle(
 // Puedes añadir más estilos aquí si los necesitas en el futuro
 const TextStyle counterLabelStyle = TextStyle(
   fontFamily: 'Raleway', // Mismo Raleway
-  color:
-      Colors.white, // El color de los números y etiquetas de tiempo es blanco
+  color: Colors.white, // El color de los números y etiquetas de tiempo es blanco
   fontSize: 18,
   fontWeight: FontWeight.w500, // O el peso que prefieras para los números
 );
