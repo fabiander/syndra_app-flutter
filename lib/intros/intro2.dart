@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:syndra_app/texto/tipoletra.dart';
 import 'dart:async';
 import 'intro3.dart';
 
@@ -36,10 +37,10 @@ class _Intro2State extends State<Intro2> with SingleTickerProviderStateMixin {
     _controller.forward();
 
     // Navegación con FadeTransition
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 8), () {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 600),
+          transitionDuration: const Duration(milliseconds: 700),
           pageBuilder: (_, __, ___) => const Intro3(),
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);
@@ -72,17 +73,14 @@ class _Intro2State extends State<Intro2> with SingleTickerProviderStateMixin {
                 margin: const EdgeInsets.only(left: 45, top: 350),
                 padding: const EdgeInsets.all(36),
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(163, 217, 207, 0.3),
+                  color: Color.fromRGBO(163, 217, 207, 0.7),
                   borderRadius: BorderRadius.circular(20),
                 ),
 
-                child: const Text(
-                  'Apoyo emocional a un toque de distancia',
-                  style: TextStyle(
-                    fontSize: 29,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'ralleway',
-                    color: Color.fromRGBO(33, 78, 62, 1.0),
+                child: Text(
+                  'Estamos aquí para escucharte y guiarte.',
+                  style: counterTitleStyle.copyWith(
+                    fontSize: 26,
                   ),
                   textAlign: TextAlign.left,
                 ),

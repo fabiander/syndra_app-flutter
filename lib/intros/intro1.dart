@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'intro2.dart';
+import 'package:syndra_app/texto/tipoletra.dart';
 
 class Intro1 extends StatefulWidget {
   const Intro1({super.key});
@@ -39,10 +40,10 @@ class _Intro1State extends State<Intro1> with SingleTickerProviderStateMixin {
     });
 
     // ✅ Cambio a la siguiente pantalla después de 6 segundos
-    Timer(const Duration(seconds: 6), () {
+    Timer(const Duration(seconds: 8), () {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 800),
+          transitionDuration: const Duration(milliseconds: 700),
           pageBuilder: (_, __, ___) => const Intro2(),
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);
@@ -76,20 +77,19 @@ class _Intro1State extends State<Intro1> with SingleTickerProviderStateMixin {
             position: _textAnimation,
             child: Align(
               alignment: Alignment.topCenter,
+
               child: Container(
                 margin: const EdgeInsets.only(right: 45, top: 90),
                 padding: const EdgeInsets.all(36),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(163, 217, 207, 0.3),
+                  color: const Color.fromRGBO(163, 217, 207, 0.6),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  'Apoyo emocional a un toque de distancia',
-                  style: TextStyle(
-                    fontSize: 29,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'ralleway',
-                    color: Color.fromRGBO(33, 78, 62, 1.0),
+
+                child:  Text(
+                  'Un espacio seguro, un oído atento.',
+                  style: counterTitleStyle.copyWith(
+                    fontSize: 26
                   ),
                   textAlign: TextAlign.left,
                 ),
