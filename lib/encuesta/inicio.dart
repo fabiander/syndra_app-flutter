@@ -1,13 +1,13 @@
-// lib/models/question.dart
+// lib/encuesta/inicio.dart
+
 class Question {
   final String text;
-  final List<String> options; // Opciones de respuesta
-  // Puedes añadir más propiedades si necesitas:
-  // final int correctAnswerIndex; // Si hay respuestas correctas
-  // final QuestionType type; // Ej: multiple_choice, text_input
+  final List<String> options;
+  final bool isNumericFrequency; // ¡Esta línea es la clave!
 
-  Question({required this.text, required this.options});
+  Question({
+    required this.text,
+    required this.options,
+    this.isNumericFrequency = false, // Y esta línea con el valor por defecto
+  });
 }
-
-// Puedes añadir una enumeración para el tipo de pregunta si las preguntas varían
-// enum QuestionType { multipleChoice, singleChoice, textInput }

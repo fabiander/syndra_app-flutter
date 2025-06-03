@@ -5,7 +5,7 @@ import 'package:syndra_app/login/cajas.dart';
 import 'package:syndra_app/data/connection.dart';
 import 'package:syndra_app/olvidopasword/ventanasdialog.dart';
 import 'package:syndra_app/colores_espacios/tonoscolores.dart';
-
+import 'package:syndra_app/texto/tipoletra.dart';
 
 class RegistroScreen extends StatefulWidget {
   const RegistroScreen({super.key});
@@ -63,19 +63,16 @@ class _RegistroScreenState extends State<RegistroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true, // es el valor por defecto y ayuda con el teclado
+      resizeToAvoidBottomInset:
+          true, // es el valor por defecto y ayuda con el teclado
 
       appBar: AppBar(
-        backgroundColor: ColoresApp.barColor, // Transparente para que se vea el fondo
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,color: ColoresApp.iconColor,size: 40.0,), // Icono de volver
-          onPressed: () {
-            Navigator.pop(context); // Vuelve a la pantalla anterior
-          },
-        ),
+        backgroundColor:
+            Colors.transparent, // Transparente para que se vea el fondo
       ),
 
-      extendBodyBehindAppBar: true, // Para que el body se extienda detrás de la AppBar transparente
+      extendBodyBehindAppBar:
+          true, // Para que el body se extienda detrás de la AppBar transparente
 
       body: Container(
         decoration: BoxDecoration(color: ColoresApp.backgroundColor),
@@ -189,11 +186,16 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             var contrasena = contrasenaController.text.trim();
 
                             // Validar campos vacíos
-                            if (nombre.isEmpty || edadTexto.isEmpty || email.isEmpty || usuario.isEmpty || contrasena.isEmpty) {
+                            if (nombre.isEmpty ||
+                                edadTexto.isEmpty ||
+                                email.isEmpty ||
+                                usuario.isEmpty ||
+                                contrasena.isEmpty) {
                               await showCustomAlertDialog(
                                 context: context,
                                 icon: Icons.warning_amber_rounded,
-                                message:'Por favor, llena todos los campos antes de guardar.',
+                                message:
+                                    'Por favor, llena todos los campos antes de guardar.',
                                 buttonColor: Colors.pinkAccent,
                                 borderColor: Colors.pinkAccent,
                               );
@@ -220,13 +222,16 @@ class _RegistroScreenState extends State<RegistroScreen> {
                               'contrasena': contrasena,
                             };
 
-                            await MongoDatabase.insert(data,); // Mostrar ventana de éxito
+                            await MongoDatabase.insert(
+                              data,
+                            ); // Mostrar ventana de éxito
 
                             await showCustomAlertDialog(
                               // ignore: use_build_context_synchronously
                               context: context,
                               icon: Icons.check_circle,
-                              message:'Los datos se guardaron correctamente en la base de datos.',
+                              message:
+                                  'Los datos se guardaron correctamente en la base de datos.',
                               buttonColor: Colors.green,
                               borderColor: Colors.green,
                             );
@@ -237,9 +242,26 @@ class _RegistroScreenState extends State<RegistroScreen> {
                             emailController.clear();
                             usuarioController.clear();
                             contrasenaController.clear();
-                            setState(() { _selectedDate =null; // Reinicia la fecha seleccionada
+                            setState(() {
+                              _selectedDate =
+                                  null; // Reinicia la fecha seleccionada
                             });
                           },
+                        ),
+                        Espacios.espacio30,
+
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/login', // Navegar a la pantalla de inicio de sesión
+                            );
+                          },
+                          child: Text(
+                            'Volver',
+                            style: menuSectionTitleStyle,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),

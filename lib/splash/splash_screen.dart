@@ -18,7 +18,8 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Offset> _textAnimation;
 
   // Duración total de la SplashScreen antes de navegar
-  final int _splashDurationSeconds = 7; // Aumentado a 7 segundos para que se vea más
+  final int _splashDurationSeconds =
+      7; // Aumentado a 7 segundos para que se vea más
 
   @override
   void initState() {
@@ -106,7 +107,8 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColoresApp.backgroundColor, // Color de fondo de tu SplashScreen
+      backgroundColor:
+          ColoresApp.backgroundColor, // Color de fondo de tu SplashScreen
       body: Stack(
         children: [
           // Centro del logo animado
@@ -115,31 +117,33 @@ class _SplashScreenState extends State<SplashScreen>
               position: _logoAnimation,
               child: Image.asset(
                 'assets/images/logo.png',
-                width: 220, // Un poco más grande para que se vea mejor
-                height: 220, // Un poco más grande
+                width: 180, // Un poco más grande para que se vea mejor
+                height: 180, // Un poco más grande
               ),
             ),
           ),
+
           // Centro del texto "Syndra" animado, posicionado debajo del logo
-          
           Align(
             alignment: Alignment.center,
 
-            child: SlideTransition( 
+            child: SlideTransition(
               position: _textAnimation,
-              child:  Padding(
+              child: Padding(
                 // Ajusta este padding para controlar la distancia del texto respecto al logo.
-                padding: EdgeInsets.only(top: 300.0,), // Ajuste para el texto debajo del logo
-                
-              child: Text(
+                padding: EdgeInsets.only(
+                  top: 250.0,
+                ), // Ajuste para el texto debajo del logo
+
+                child: Text(
                   'Syndra',
                   style: counterTitleStyle.copyWith(
-                  fontSize: 38, // Tamaño del texto más grande
-                 ),
+                    fontSize: 38, // Tamaño del texto más grande
+                  ),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

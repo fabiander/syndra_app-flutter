@@ -18,7 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-
   @override
   void dispose() {
     emailController.dispose();
@@ -28,12 +27,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardHeight = MediaQuery.of(context,).viewInsets.bottom; // altura del teclado
+    final keyboardHeight = MediaQuery.of(
+      context,
+    ).viewInsets.bottom; // altura del teclado
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-
         child: Container(
           decoration: BoxDecoration(
             color: ColoresApp.backgroundColor, // color de fondo de la pantalla
@@ -41,8 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
           child: Stack(
             children: [
-              
-              Positioned.fill( // Imagen de fondo que ocupa toda la pantalla
+              Positioned.fill(
+                // Imagen de fondo que ocupa toda la pantalla
                 child: Image.asset(
                   'assets/images/img_media.png',
                   fit: BoxFit.cover,
@@ -53,18 +53,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context, constraints) {
                   return SingleChildScrollView(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: constraints.maxHeight - keyboardHeight,),
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight - keyboardHeight,
+                      ),
                       child: IntrinsicHeight(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-
                             Container(
-                              margin: const EdgeInsets.only(top: 125, right: 15, left: 15,),
-                              padding: const EdgeInsets.all(20,), // Padding dentro del contenedor verde
+                              margin: const EdgeInsets.only(
+                                top: 100,
+                                right: 20,
+                                left: 20,
+                              ),
+                              padding: const EdgeInsets.all(
+                                15,
+                              ), // Padding dentro del contenedor verde
                               decoration: BoxDecoration(
-                                color: Colors.transparent, // Fondo transparente de la imagen
+                                color: Colors
+                                    .transparent, // Fondo transparente de la imagen
                                 border: Border.all(
                                   color: ColoresApp.texto1,
                                   width: 2,
@@ -76,12 +84,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 25, bottom: 20,),
-                                    child: Image.asset('assets/images/login_logo.png',
+                                    padding: const EdgeInsets.only(
+                                      top: 20,
+                                      bottom: 20,
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/login_logo.png',
                                       fit: BoxFit.cover,
-                                      height:120, // Altura fija para el logo para consistencia
+                                      height:
+                                          120, // Altura fija para el logo para consistencia
                                     ),
                                   ),
 
@@ -89,20 +101,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                   // Cajas de texto (Email y Contraseña)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10,),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
 
                                       children: [
-                                        
                                         cajastexto(
                                           icon: Icons.email,
                                           hint: 'Correo electrónico',
                                           controller: emailController,
                                         ),
 
-                                        Espacios.espacio30, 
-                                        
+                                        Espacios.espacio30,
+
                                         cajastexto(
                                           icon: Icons.lock,
                                           hint: 'Contraseña',
@@ -114,31 +128,43 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
 
                                   Espacios.espacio15,
-                                  
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 25, bottom: 20,), // Espacio arriba y abajo de los botones
-                                    child: Column(
-                                      mainAxisAlignment:MainAxisAlignment.center,
-                                      children: [
 
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 25,
+                                      bottom: 20,
+                                    ), // Espacio arriba y abajo de los botones
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
                                         BotonElevado(
                                           label: 'Ingresar',
                                           onPressed: () async {
-                                            final email = emailController.text.trim();
-                                            final contrasena = passwordController.text.trim();
+                                            final email = emailController.text
+                                                .trim();
+                                            final contrasena =
+                                                passwordController.text.trim();
 
-                                            if (email.isEmpty || contrasena.isEmpty) {
+                                            if (email.isEmpty ||
+                                                contrasena.isEmpty) {
                                               await showCustomAlertDialog(
                                                 context: context,
-                                                icon: Icons.warning, // Icono para advertencia
-                                                message:'Por favor, completa todos los campos.',
+                                                icon: Icons
+                                                    .warning, // Icono para advertencia
+                                                message:
+                                                    'Por favor, completa todos los campos.',
                                                 buttonText: 'Aceptar',
                                                 buttonColor: Colors.amberAccent,
                                                 borderColor: Colors.amberAccent,
                                               );
                                               return;
                                             }
-                                            final user = await MongoDatabase.findUser(email, contrasena,);
+                                            final user =
+                                                await MongoDatabase.findUser(
+                                                  email,
+                                                  contrasena,
+                                                );
 
                                             if (user != null) {
                                               Navigator.pushReplacementNamed(
@@ -151,7 +177,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 // ignore: use_build_context_synchronously
                                                 context: context,
                                                 icon: Icons.error,
-                                                message:'Correo electrónico o contraseña incorrectos.',
+                                                message:
+                                                    'Correo electrónico o contraseña incorrectos.',
                                                 buttonText: 'Aceptar',
                                                 buttonColor: Colors.amberAccent,
                                                 borderColor: Colors.amberAccent,
@@ -160,21 +187,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                           },
                                         ),
 
-                                        Espacios.espacio20, 
+                                        Espacios.espacio20,
 
                                         TextButton(
                                           onPressed: () {
-                                            Navigator.pushNamed(context,'/verificacionemail',);},// ruta para la verificación de email
+                                            Navigator.pushNamed(
+                                              context,
+                                              '/verificacionemail',
+                                            );
+                                          }, // ruta para la verificación de email
 
-                                          child: Text('¿Olvidaste tu contraseña?',
+                                          child: Text(
+                                            '¿Olvidaste tu contraseña?',
                                             style: menuSectionTitleStyle,
-                                            ),
+                                          ),
                                         ),
 
                                         Espacios.espacio05,
-                                           
+
                                         TextButton(
-                                          onPressed: () {Navigator.pushNamed(context,'/registro',);},
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              '/registro',
+                                            );
+                                          },
                                           child: Text(
                                             'Regístrate aquí',
                                             style: menuSectionTitleStyle,
@@ -187,7 +224,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ),
                             ),
-                            if (keyboardHeight == 0) // Solo añade el Spacer si el teclado NO está visible
+                            if (keyboardHeight ==
+                                0) // Solo añade el Spacer si el teclado NO está visible
                               const Spacer(),
                           ],
                         ),

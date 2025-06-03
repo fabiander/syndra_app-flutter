@@ -78,10 +78,8 @@ class _Intro3State extends State<Intro3> with SingleTickerProviderStateMixin {
                 ),
 
                 child: Text(
-                  'Tu bienestar emocional, ahora más cerca que nunca.',
-                  style: counterTitleStyle.copyWith(
-                    fontSize: 26
-                  ),
+                  'Tu bienestar, más cerca que nunca.',
+                  style: counterTitleStyle.copyWith(fontSize: 26),
                   textAlign: TextAlign.left,
                 ),
               ),
