@@ -9,12 +9,10 @@ class MongoDatabase {
     db = await Db.create(mongoUri);
     await db.open();
     collection = db.collection(collectionName);
-    print('Conexión a MongoDB establecida.');
   }
 
   static Future<void> insert(Map<String, dynamic> data) async {
     await collection.insertOne(data);
-    print('Documento insertado: $data');
   }
 
   static Future<List<Map<String, dynamic>>> getAll() async {
@@ -61,7 +59,6 @@ class MongoDatabase {
       final user = await collection.findOne(where.eq('email', email));
       return user;
     } catch (e) {
-      print("Error al buscar usuario por email: $e");
       return null;
     }
   }
@@ -71,15 +68,11 @@ class MongoDatabase {
     String newPassword,
   ) async {
     try {
-      print('DEBUG: Intentando actualizar contraseña para el email: $email');
-      print('DEBUG: Nueva contraseña: $newPassword');
 
       final userExists = await collection.findOne(where.eq('email', email));
       if (userExists == null) {
-        print('DEBUG: El usuario con email "$email" NO fue encontrado.');
         return false;
       }
-      print('DEBUG: Usuario con email "$email" ENCONTRADO.');
 
       final updateResult = await collection.updateOne(
         where.eq('email', email),
@@ -89,8 +82,6 @@ class MongoDatabase {
       final matchedCount = updateResult.nMatched;
       final modifiedCount = updateResult.nModified;
 
-      print('DEBUG: Matched Count: $matchedCount');
-      print('DEBUG: Modified Count: $modifiedCount');
 
       if (modifiedCount == 1) {
         return true;
@@ -100,13 +91,11 @@ class MongoDatabase {
         return false;
       }
     } catch (e) {
-      print("DEBUG: ¡Error crítico al actualizar contraseña! Excepción: $e");
       return false;
     }
   }
 
   static Future<void> close() async {
     await db.close();
-    print('Conexión a MongoDB cerrada.');
   }
 }

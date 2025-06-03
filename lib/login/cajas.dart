@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syndra_app/texto/tipoletra.dart';
-import 'package:syndra_app/colores/tonoscolores.dart';
+import 'package:syndra_app/colores_espacios/tonoscolores.dart';
 
 // Definición de estilo de ejemplo, asumiendo que lo tienes en algún lugar
 
@@ -37,15 +37,18 @@ class _cajastextoState extends State<cajastexto> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      
       controller: widget.controller,
       obscureText: _obscureText, // Ahora usa la variable de estado interna
       style: menuSectionTitleStyle,
 
       decoration: InputDecoration(
-        // el campo donde se muestra el icono y el texto en verde
         prefixIcon: widget.icon != null ? Icon(widget.icon, color:ColoresApp.iconColor):null,
         hintText: widget.hint,
-        hintStyle: menuSectionTitleStyle,
+        hintStyle: menuSectionTitleStyle.copyWith(
+           color: ColoresApp.iconColor, 
+          fontWeight: FontWeight.w400,
+        ),
 
         // Bordes: ¡Correctamente dentro de InputDecoration!
         border: const UnderlineInputBorder(), // línea de abajo del campo

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
-import 'package:syndra_app/colores/tonoscolores.dart';
+import 'package:syndra_app/colores_espacios/espacios.dart';
+import 'package:syndra_app/colores_espacios/tonoscolores.dart';
 import 'package:syndra_app/data/connection.dart';
 import 'package:syndra_app/login/cajas.dart';
 import 'package:syndra_app/olvidopasword/ventanasdialog.dart';
+import 'package:syndra_app/texto/tipoletra.dart';
 
 
 class CambioPasswordScreen extends StatefulWidget {
@@ -31,7 +33,7 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
 
 
     if (newPassword.isEmpty || confirmPassword.isEmpty) {
-      await showCustomAlertDialog(// <--- Usamos la nueva función
+      await showCustomAlertDialog(//  función
         context: context,
         icon: Icons.warning_amber_rounded, // Icono para advertencia
         message: 'Por favor, ingresa y confirma tu nueva contraseña.',
@@ -41,16 +43,10 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
     }
 
     if (newPassword != confirmPassword) {
-      await showCustomAlertDialog(// <--- Usamos la nueva función
+      await showCustomAlertDialog(// función
         context: context,
         icon: Icons.error_outline, // Icono para error
         message: 'Las contraseñas no coinciden.',
-        buttonColor: const Color.fromRGBO(
-          255,
-          99,
-          71,
-          1.0,
-        ), // Rojo para errores
       );
       return;
     }
@@ -59,8 +55,9 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
       await showCustomAlertDialog(// <--- Usamos la nueva función
         context: context,
         icon: Icons.info_outline, // Icono para información/advertencia
-        message: 'La contraseña debe tener al menos 6 caracteres.',
-        buttonColor: Colors.blueAccent, // Color diferente para este tipo de mensaje
+        message: 'La contraseña debe tener al menos 5 caracteres.',
+        buttonColor: Colors.blueAccent,
+        borderColor: Colors.blueAccent, // Color diferente para este tipo de mensaje
       );
       return;
     }
@@ -72,35 +69,30 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
     );
 
     if (success) {
-      await showCustomAlertDialog( // <--- Usamos la nueva función
+      await showCustomAlertDialog( //función
+        // ignore: use_build_context_synchronously
         context: context,
         icon: Icons.check_circle_outline, // Icono para éxito
         message:'Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión.',
-        buttonColor: Colors.green, // Verde para éxito
+        buttonColor: Colors.green,
+        borderColor: Colors.green, // Color verde para éxito
       );
-      // Navegar de vuelta al login y eliminar todas las rutas anteriores
-      // Ya que el diálogo es asíncrono, puedes navegar después de que se cierre.
-      if (mounted) {
-        // <--- Es buena práctica verificar si el widget sigue montado
+
+      if (mounted) { //  if anidado login o error
         Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       }
     } else {
-      await showCustomAlertDialog(
-        // <--- Usamos la nueva función
+      await showCustomAlertDialog(// función
+        // ignore: use_build_context_synchronously
         context: context,
         icon: Icons.error_outline, // Icono para error
         message: 'No se pudo actualizar la contraseña. Intenta de nuevo.',
-        buttonColor: const Color.fromRGBO(
-          255,
-          99,
-          71,
-          1.0,
-        ), // Rojo para errores
+        buttonColor: const Color.fromRGBO( 255, 99, 71, 1.0,), // Rojo para errores
       );
     }
   }
 
-  
+
 
   @override
   Widget build(BuildContext context) {
@@ -120,49 +112,40 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
+
               LayoutBuilder(
                 builder: (context, constraints) {
                   return SingleChildScrollView(
                     padding: EdgeInsets.only(
-                      bottom:
-                          keyboardHeight +
-                          MediaQuery.of(context).padding.bottom +
-                          (isKeyboardVisible ? 20.0 : 0.0),
+                      bottom: keyboardHeight  + (isKeyboardVisible ? 10.0 : 0.0),
                       top: isKeyboardVisible ? 20.0 : 0.0,
                     ),
+
+
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight:
-                            constraints.maxHeight -
-                            (isKeyboardVisible ? 20.0 : 0.0) -
-                            keyboardHeight -
-                            50.0,
+                        minHeight:constraints.maxHeight - keyboardHeight,
                       ),
+
                       child: IntrinsicHeight(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+
                             Container(
-                              margin: const EdgeInsets.only(
-                                top: 130,
-                                right: 35,
-                                left: 35,
-                              ),
+                              margin: const EdgeInsets.only(top: 120, right: 35, left: 35,),
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: const Color.fromRGBO(
-                                    63,
-                                    140,
-                                    112,
-                                    1.0,
-                                  ),
+                                  color: ColoresApp.texto1, // Color del borde
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
+
+
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -170,34 +153,24 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
                                     padding: const EdgeInsets.only(bottom: 20),
                                     child: Text(
                                       'Nueva Contraseña',
-                                      style: TextStyle(
+                                      style: counterTitleStyle.copyWith(
                                         color: ColoresApp.texto1,
                                         fontSize: 24,
-                                        fontWeight: FontWeight.bold,
                                       ),
-
-
-
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  Text(
-                                    'Ingresa tu nueva contraseña y confírmala para ${widget.email}.',
-                                    style: TextStyle(
-                                      color: ColoresApp.texto1
-                                          .withOpacity(0.8),
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 25),
+ 
+                                  Espacios.espacio20,
+
                                   cajastexto(
                                     icon: Icons.lock_outline,
                                     hint: 'Nueva Contraseña',
                                     controller: newPasswordController,
                                     isPassword: true,
                                   ),
-                                  const SizedBox(height: 15),
+
+                                  Espacios.espacio20,
 
                                   cajastexto(
                                     icon: Icons.lock_reset,
@@ -206,34 +179,29 @@ class _CambioPasswordScreenState extends State<CambioPasswordScreen> {
                                     isPassword: true,
 
                                   ),
-                                  const SizedBox(height: 30),
+                                  Espacios.espacio30,
 
                                   BotonElevado(
                                     label: 'Restablecer',
                                     onPressed: _cambiarContrasena,
                                   ),
-                                  const SizedBox(height: 10),
+
+                                  Espacios.espacio20,
+
                                   TextButton(
                                     onPressed: () {
                                       Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        '/login',
-                                        (route) => false,
-                                      ); // Vuelve al login y limpia el stack
+                                        context,'/login', (route) => false,); // Vuelve al login y limpia el stack
                                     },
-                                    child: const Text(
-                                      'Cancelar y Volver al Login',
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(
-                                          63,
-                                          140,
-                                          112,
-                                          1.0,
-                                        ),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+
+                                    child: Text('Login',
+                                      style: counterTitleStyle.copyWith(
+                                        color: ColoresApp.iconColor.withValues(alpha: 0.8,),
+                                        fontSize: 24,
+                                      )
+                                    ),   
                                   ),
+
                                 ],
                               ),
                             ),

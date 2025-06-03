@@ -1,4 +1,3 @@
-// lib/styles/text_styles.dart
 import 'package:flutter/material.dart';
 
 const TextStyle menuSectionTitleStyle = TextStyle(

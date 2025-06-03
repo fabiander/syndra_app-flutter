@@ -14,8 +14,8 @@ class ColoresApp {
   static const Color iconColor = Color.fromRGBO(33, 78, 62, 1.0);
 
   // Puedes añadir más colores si los necesitas
-  static const Color texto1 = Color.fromRGBO( 63, 140, 112, 1.0,
-  ); // El que usas en el borde del contenedor del formulario
- // static const Color myRed = Colors.redAccent; // Ejemplo
-  //static const Color myOrange = Colors.orange; // Ejemplo
+  static const Color texto1 = Color.fromRGBO( 63, 140, 112, 1.0,); // El que usas en el borde del contenedor del formulario
+
+  
+
 }
