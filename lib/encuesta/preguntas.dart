@@ -4,8 +4,14 @@ import 'package:syndra_app/encuesta/inicio.dart'; // Asegúrate de que esta ruta
 class SurveyOverlay extends StatefulWidget {
   final VoidCallback
   onSurveyCompleted; // Callback para cuando la encuesta termine
+  final VoidCallback
+  onExitSurvey; // Callback para cuando el usuario sale de la encuesta
 
-  const SurveyOverlay({super.key, required this.onSurveyCompleted});
+  const SurveyOverlay({
+    super.key,
+    required this.onSurveyCompleted,
+    required this.onExitSurvey,
+  });
 
   @override
   State<SurveyOverlay> createState() => _SurveyOverlayState();
@@ -17,50 +23,92 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
   // Aquí guardaremos las respuestas del usuario (clave: índice de pregunta, valor: respuesta String)
   final Map<int, String> _userAnswers = {};
 
+  // Controlador para el TextField de texto libre
+  final TextEditingController _freeTextController = TextEditingController();
+
   // Define tus 5 preguntas aquí
   final List<Question> _questions = [
-    // ✨ PRIMERA PREGUNTA: Frecuencia con opciones numéricas en cuadros ✨
+    // Primera Pregunta: Frecuencia con opciones numéricas en cuadros
     Question(
       text: '¿Cuantas veces al dia consumes marihuana? ',
-      options: ['1', '2', '3', '4', '5', '6'], // Opciones numéricas simples
-      isNumericFrequency:
-          true, // Propiedad para identificar este tipo de pregunta
+      options: ['1', '2', '3', '4', '5', '6'],
+      isNumericFrequency: true,
+      isFreeText: false,
     ),
     // Segunda Pregunta: Botones de lista vertical (estilo original)
     Question(
-      text:
-          '¿crees que tu consumo fue por alguna mala experiencia en tu vida ?',
+      text: '¿Alguna vez has intentado dejar tu consumo?',
       options: ['Sí', 'No', 'No se'],
+      isNumericFrequency: false,
+      isFreeText: false,
     ),
     // Tercera Pregunta: Botones de lista vertical (estilo original)
     Question(
-      text:
-          '¿El consumo afecta tus responsabilidades (trabajo, estudios, hogar)?',
-      options: ['Si', 'No', 'A veces', 'Nunca'],
+      text: '¿El consumo afecta tus compromisos (trabajo, estudios, hogar)?',
+      options: ['Si', 'No', 'no se'],
+      isNumericFrequency: false,
+      isFreeText: false,
     ),
     // Cuarta Pregunta: Botones de lista vertical (estilo original)
     Question(
-      text: '¿haz intentado dejar la drogradicion, cuantas veces en este año?',
-      options: ['No', 'Raramente', 'A veces', 'Sí, a menudo'],
+      text: '¿Hubo una experiencia o momento en tu vida que inicio tu consumo?',
+      options: ['Si', 'No', 'No se'],
+      isNumericFrequency: false,
+      isFreeText: false,
     ),
-    // Quinta Pregunta: Botones de lista vertical (estilo original)
+    // Quinta Pregunta: Texto libre con caja de texto pequeña (maxLines: 1)
     Question(
-      text: '¿Cual es tu proposito o por quien quieres dejarla?',
-      options: ['No', 'Un poco', 'Sí, notablemente'],
+      text: '¿Tu proposito o persona por quien quieres dejarla?',
+      options: null, // Pasa null para una pregunta de texto libre
+      isFreeText: true, // ¡Marca esta pregunta como de texto libre!
+      isNumericFrequency: false,
     ),
   ];
 
-  void _nextPage() {
-    // Validar que se haya seleccionado una opción para la pregunta actual antes de avanzar
-    if (_userAnswers[_currentPage] == null ||
-        _userAnswers[_currentPage]!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, selecciona una opción para continuar.'),
-        ),
-      );
-      return; // No avanza si no hay respuesta
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      if (_pageController.page?.round() != _currentPage) {
+        setState(() {
+          // Guarda el texto de la página anterior antes de cambiar
+          if (_questions[_currentPage].isFreeText == true) {
+            _userAnswers[_currentPage] = _freeTextController.text.trim();
+          }
+          _currentPage = _pageController.page!.round();
+          _updateFreeTextController(); // Actualiza el controlador de texto al cambiar a la nueva página
+        });
+      }
+    });
+    _updateFreeTextController(); // Configura el controlador inicial al cargar el widget
+  }
+
+  // Método para actualizar el TextField con la respuesta guardada
+  void _updateFreeTextController() {
+    if (_questions[_currentPage].isFreeText == true) {
+      _freeTextController.text = _userAnswers[_currentPage] ?? '';
     }
+  }
+
+  void _nextPage() {
+    final currentQuestion = _questions[_currentPage];
+
+    // Lógica de validación para preguntas de texto libre
+    if (currentQuestion.isFreeText == true) {
+      final text = _freeTextController.text.trim();
+      if (text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Por favor, escribe tu respuesta para continuar.'),
+          ),
+        );
+        return;
+      }
+      _userAnswers[_currentPage] = text; // Guarda el texto libre
+    }
+    // Para preguntas de opciones, la validación y avance se hacen en _onOptionSelected.
+    // Aquí solo se ejecuta si estamos en la última pregunta de texto libre O si se llama
+    // _nextPage directamente sin una opción seleccionada (que no debería ocurrir si la opción es automática).
 
     if (_currentPage < _questions.length - 1) {
       _pageController.nextPage(
@@ -69,7 +117,6 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
       );
     } else {
       // Última pregunta, la encuesta ha terminado
-      // Aquí podrías procesar las respuestas en _userAnswers
       print(
         'Encuesta completada. Respuestas: $_userAnswers',
       ); // Para depuración
@@ -80,6 +127,11 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
 
   // Método para volver a la página anterior
   void _previousPage() {
+    // Si la pregunta actual es de texto libre, guarda el texto antes de retroceder
+    if (_questions[_currentPage].isFreeText == true) {
+      _userAnswers[_currentPage] = _freeTextController.text.trim();
+    }
+
     if (_currentPage > 0) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 500),
@@ -92,7 +144,17 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
     setState(() {
       _userAnswers[_currentPage] = option; // Guarda la respuesta seleccionada
     });
-    _nextPage(); // Pasa a la siguiente pregunta automáticamente al seleccionar una opción
+    // Solo avanzamos automáticamente si NO es la última pregunta o si no es de texto libre
+    if (_currentPage < _questions.length - 1 &&
+        _questions[_currentPage].isFreeText != true) {
+      _nextPage();
+    }
+    // Si es la última pregunta y de texto libre, el avance lo gestiona el botón "Finalizar"
+  }
+
+  // Llama a este método cuando el usuario decida salir al menú
+  void _exitSurvey() {
+    widget.onExitSurvey();
   }
 
   @override
@@ -101,13 +163,13 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Dialog(
-      backgroundColor: Colors.transparent, // Fondo transparente del diálogo
-      clipBehavior: Clip
-          .antiAlias, // Asegura que el contenido respete los bordes redondeados
+      backgroundColor:
+          Colors.transparent, // ✨ FONDODEL DIÁLOGO COMPLETAMENTE TRANSPARENTE ✨
+      clipBehavior: Clip.antiAlias,
       child: Center(
         child: Container(
-          height: screenHeight * 0.8, // 80% de la altura de la pantalla
-          width: screenWidth * 0.9, // 90% del ancho de la pantalla
+          height: screenHeight * 0.8,
+          width: screenWidth * 0.9,
           decoration: BoxDecoration(
             color: Colors.white, // Fondo blanco para el contenido del diálogo
             borderRadius: BorderRadius.circular(20),
@@ -121,7 +183,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
           ),
           child: Column(
             children: [
-              // ✨ NUEVO ENCABEZADO CON BOTÓN "VOLVER" Y NÚMERO DE PREGUNTA ✨
+              // ENCABEZADO CON BOTÓN "VOLVER" Y NÚMERO DE PREGUNTA
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
@@ -136,16 +198,16 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                         icon: const Icon(
                           Icons.arrow_back_ios,
                           color: Color(0xFF6B45A8),
+                          size: 28,
                         ),
                         onPressed: _previousPage,
-                        tooltip:
-                            'Volver a la pregunta anterior', // Texto de ayuda
+                        tooltip: 'Volver a la pregunta anterior',
+                        // splashRadius: 24, // Eliminado por compatibilidad con Material 3
                       )
                     else
-                      // Placeholder para mantener el espacio si no hay botón
                       const SizedBox(
                         width: 48,
-                      ), // Ancho aproximado del IconButton
+                      ), // Espacio para alinear el título
                     // Texto de la pregunta X de Y
                     Expanded(
                       child: Text(
@@ -154,32 +216,40 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF6B45A8), // Color púrpura
+                          color: Color(0xFF6B45A8),
                         ),
                       ),
                     ),
-                    // Placeholder para equilibrar el diseño si no hay botón en la izquierda
-                    const SizedBox(
-                      width: 48,
-                    ), // Ancho aproximado del IconButton
+                    // Botón "Salir al Menú" en la esquina superior derecha
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close, // Un ícono de "X" o cerrar
+                        color: Colors.grey,
+                        size: 28,
+                      ),
+                      onPressed: _exitSurvey,
+                      tooltip: 'Salir de la encuesta',
+                    ),
                   ],
                 ),
               ),
-              const Divider(
-                height: 1,
-                thickness: 1,
-                color: Colors.grey,
-              ), // Separador visual
+              const Divider(height: 1, thickness: 1, color: Colors.grey),
 
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
                   physics:
-                      const NeverScrollableScrollPhysics(), // Evita el deslizamiento manual
+                      const NeverScrollableScrollPhysics(), // Deshabilita el deslizamiento manual
                   itemCount: _questions.length,
                   onPageChanged: (index) {
                     setState(() {
+                      // Guarda el texto libre si se sale de la página actual
+                      if (_questions[_currentPage].isFreeText == true) {
+                        _userAnswers[_currentPage] = _freeTextController.text
+                            .trim();
+                      }
                       _currentPage = index;
+                      _updateFreeTextController(); // Actualiza el controlador para la nueva página
                     });
                   },
                   itemBuilder: (context, index) {
@@ -187,7 +257,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                     return SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20.0,
-                        vertical: 20.0, // Aumentado para mejor separación
+                        vertical: 20.0,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -203,13 +273,66 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                           ),
                           const SizedBox(height: 30),
 
-                          // LÓGICA CONDICIONAL PARA MOSTRAR LAS OPCIONES
-                          if (question.isNumericFrequency == true)
+                          // LÓGICA CONDICIONAL PARA MOSTRAR TEXTFIELD O LAS OPCIONES
+                          if (question.isFreeText == true)
+                            Column(
+                              // Usamos Column para el TextField y el botón Finalizar
+                              children: [
+                                TextField(
+                                  controller: _freeTextController,
+                                  maxLines:
+                                      1, // Esto hace la caja pequeña para 1 o 2 palabras
+                                  decoration: InputDecoration(
+                                    hintText: 'Escribe tu propósito aquí...',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFF6B45A8),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFF6B45A8),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.grey[100],
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.done,
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ), // Espacio entre el TextField y el botón
+                                // Botón "Finalizar" solo para la última pregunta de texto libre
+                                ElevatedButton(
+                                  onPressed:
+                                      _nextPage, // _nextPage manejará la finalización
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6B45A8),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 15,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Finalizar',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ],
+                            )
+                          else if (question.isNumericFrequency == true)
                             Wrap(
                               alignment: WrapAlignment.center,
                               spacing: 15.0,
                               runSpacing: 15.0,
-                              children: question.options.map((option) {
+                              children: question.options!.map((option) {
                                 final isSelected =
                                     _userAnswers[_currentPage] == option;
                                 return GestureDetector(
@@ -258,8 +381,8 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                                 );
                               }).toList(),
                             )
-                          else
-                            ...question.options.map((option) {
+                          else // Preguntas con opciones de botón normales
+                            ...question.options!.map((option) {
                               final isSelected =
                                   _userAnswers[_currentPage] == option;
                               return Padding(
@@ -269,16 +392,11 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: isSelected
-                                        ? const Color(
-                                            0xFF6B45A8,
-                                          ) // Color púrpura si está seleccionada
-                                        : Colors
-                                              .grey[200], // Gris claro si no está seleccionada
+                                        ? const Color(0xFF6B45A8)
+                                        : Colors.grey[200],
                                     foregroundColor: isSelected
-                                        ? Colors
-                                              .white // Texto blanco si está seleccionada
-                                        : Colors
-                                              .black87, // Texto oscuro si no está seleccionada
+                                        ? Colors.white
+                                        : Colors.black87,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 15,
                                       horizontal: 10,
@@ -303,14 +421,14 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                   },
                 ),
               ),
-              // ✨ BARRA DE PROGRESO DE LADO A LADO EN LA PARTE INFERIOR ✨
+              // BARRA DE PROGRESO DE LADO A LADO EN LA PARTE INFERIOR
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: LinearProgressIndicator(
                   value: (_currentPage + 1) / _questions.length,
                   backgroundColor: Colors.grey[300],
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFF6B45A8), // Color púrpura
+                    Color(0xFF6B45A8),
                   ),
                 ),
               ),
@@ -324,6 +442,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
   @override
   void dispose() {
     _pageController.dispose();
+    _freeTextController.dispose();
     super.dispose();
   }
 }

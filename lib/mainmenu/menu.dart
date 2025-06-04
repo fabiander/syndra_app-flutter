@@ -95,23 +95,30 @@ class _HomeMenuScreenState extends State<Menu> {
       barrierDismissible: false,
       barrierColor: const Color.fromRGBO(63, 140, 112, 0.5),
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation animation,
-        Animation secondaryAnimation,
-      ) {
-        return SurveyOverlay(
-          onSurveyCompleted: () {
-            Navigator.of(context).pop();
-            setState(() {
-              _isSurveyActive = false;
-              _hasCompletedSurvey = true;
-              _showCountersScreen = true;
-              _selectedTabIndex = 0;
-            });
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation,
+          ) {
+            return SurveyOverlay(
+              onSurveyCompleted: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _isSurveyActive = false;
+                  _hasCompletedSurvey = true;
+                  _showCountersScreen = true;
+                  _selectedTabIndex = 0;
+                });
+              },
+              onExitSurvey: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _isSurveyActive = false;
+                });
+              },
+            );
           },
-        );
-      },
     );
   }
 
@@ -182,12 +189,9 @@ class _HomeMenuScreenState extends State<Menu> {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        _showCountersScreen
-                            ? const BorderRadius.vertical(
-                              top: Radius.circular(30),
-                            )
-                            : BorderRadius.zero,
+                    borderRadius: _showCountersScreen
+                        ? const BorderRadius.vertical(top: Radius.circular(30))
+                        : BorderRadius.zero,
                   ),
                   child: Column(
                     //crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -222,10 +226,9 @@ class _HomeMenuScreenState extends State<Menu> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (context) => AdmitirProblemaScreen(
-                                      onProblemAdmitted: () {},
-                                    ),
+                                builder: (context) => AdmitirProblemaScreen(
+                                  onProblemAdmitted: () {},
+                                ),
                               ),
                             );
                           }

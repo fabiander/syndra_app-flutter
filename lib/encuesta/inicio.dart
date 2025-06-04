@@ -2,12 +2,14 @@
 
 class Question {
   final String text;
-  final List<String> options;
-  final bool isNumericFrequency; // ¡Esta línea es la clave!
+  final List<String>? options;
+  final bool? isFreeText;
+  final bool? isNumericFrequency;
 
   Question({
     required this.text,
-    required this.options,
-    this.isNumericFrequency = false, // Y esta línea con el valor por defecto
+    this.options,
+    this.isFreeText,
+    this.isNumericFrequency,
   });
 }
