@@ -66,47 +66,52 @@ class _AnimatedInfoBoxState extends State<AnimatedInfoBox>
   Widget build(BuildContext context) {
     return DecoratedBoxTransition(
       decoration: _decorationTween.animate(_animationController),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 30),
-        padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
-        height: 250, // <--- ALTURA DEL WIDGET PRINCIPAL (AnimatedInfoBox)
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // centrado verticall
-          crossAxisAlignment: CrossAxisAlignment.center, //centrado horizontal
-          children: [
-            const SizedBox(height: 8), // espacio
-            // --- IMAGEN PNG ---
-            SizedBox(
-              width: 120, // Ancho de la caja
-              height: 120, // Altura de la caja
-              child: Image.asset(
-                'assets/images/paso1.png', // Asegúrate de que esta ruta sea correcta
-                width: 42, // Ancho de la imagen (puede ser igual al contenedor)
-                height:
-                    42, // Altura de la imagen (puede ser igual al contenedor)
-                fit:
-                    BoxFit
-                        .contain, // Ajusta la imagen dentro de la caja sin recortar
+      child: SizedBox(
+        width: 350,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 15.0),
+          height: 250, // <--- ALTURA DEL WIDGET PRINCIPAL (AnimatedInfoBox)
+        
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // centrado verticall
+            crossAxisAlignment: CrossAxisAlignment.center, //centrado horizontal
+            children: [
+              const SizedBox(height: 8), 
+              
+              // espacio
+              // --- IMAGEN PNG ---
+              SizedBox(
+                width: 120, // Ancho de la caja
+                height: 120, // Altura de la caja
+                child: Image.asset(
+                  'assets/images/paso1.png', // Asegúrate de que esta ruta sea correcta
+                  width: 42, // Ancho de la imagen (puede ser igual al contenedor)
+                  height:
+                      42, // Altura de la imagen (puede ser igual al contenedor)
+                  fit:
+                      BoxFit
+                          .contain, // Ajusta la imagen dentro de la caja sin recortar
+                ),
               ),
-            ),
-
-            const SizedBox(height: 12),
-
-            const Text(
-              '"No puedo, Dios puede, y dejaré que lo haga."',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                // <-- Esto es un TextStyle normal, no una asignación de variable
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize:
-                    18, // <-- Es buena práctica mantener el fontSize, si no, tomará el predeterminado
-                fontStyle:
-                    FontStyle.italic, // <-- Si quieres que siga siendo itálica
+        
+              const SizedBox(height: 12),
+        
+              const Text(
+                '"No puedo, Dios puede, y dejaré que lo haga."',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  // <-- Esto es un TextStyle normal, no una asignación de variable
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize:
+                      18, // <-- Es buena práctica mantener el fontSize, si no, tomará el predeterminado
+                  fontStyle:
+                      FontStyle.italic, // <-- Si quieres que siga siendo itálica
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -8,6 +8,7 @@ import 'package:syndra_app/login/registro.dart';
 import 'package:syndra_app/mainmenu/menu.dart';
 import 'package:syndra_app/olvidopasword/verificacionemail.dart';
 import 'package:syndra_app/olvidopasword/cambiopasword.dart';
+import 'package:syndra_app/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'Syndra App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Menu(),
+      home: SplashScreen(),
 
       routes: {
         '/intro1': (context) => const Intro1(),
