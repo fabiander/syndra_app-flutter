@@ -47,7 +47,7 @@ class MyBottomNavBar extends StatelessWidget {
 
 
         // Perfil
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        // BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
 
       ],
       currentIndex: currentIndex,

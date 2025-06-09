@@ -4,7 +4,7 @@ import 'package:syndra_app/bar_abajo/home.dart';
 import 'package:syndra_app/bar_abajo/estadisticas.dart';
 import 'package:syndra_app/bar_abajo/donaciones.dart';
 import 'package:syndra_app/bar_abajo/llamado.dart';
-import 'package:syndra_app/bar_abajo/perfil.dart';
+import 'package:syndra_app/menu_lateral/perfil.dart';
 import 'package:syndra_app/bar_abajo/barfondo.dart';
 import 'package:syndra_app/bar_arrriba/arriba.dart'; // <--- Asegúrate de que esta ruta sea correcta
 import 'package:syndra_app/encuesta/preguntas.dart';
@@ -18,6 +18,9 @@ import 'package:syndra_app/tarjetas/reconocimiento.dart';
 import 'package:syndra_app/tarjetas/aceptar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syndra_app/login/login_screen.dart';
+import 'package:syndra_app/tarjetas/chat.dart';
+import 'package:syndra_app/menu_lateral/software.dart';
+import 'package:syndra_app/menu_lateral/perfil.dart';
 
 // Importa tu clase MongoDatabase (descomenta cuando uses MongoDB real)
 // import 'package:syndra_app/data/connection.dart'; // <--- Asegúrate de que esta ruta sea correcta
@@ -314,10 +317,12 @@ class _HomeMenuScreenState extends State<Menu> {
                         textColor: textoBoton,
                         width: anchoBoton,
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Vamos a la práctica presionado'),
-                            ),
+                          // Reemplaza el SnackBar por la navegación al ChatScreen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ChatScreen(),
+                            ), 
                           );
                         },
                       ),
@@ -352,7 +357,118 @@ class _HomeMenuScreenState extends State<Menu> {
         onLogoutPressed: _logout, // <--- Conectamos el callback aquí
       ),
 
-      drawer: const Drawer(child: Center(child: Text('Menú Lateral (Drawer)'))),
+      // <--- ¡NUEVO! Implementación del Menú Lateral (Drawer) --->
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            // Encabezado del Drawer (Información de usuario)
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor, // Usa tu color primario
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Hola, $_username',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'Bienvenido a Syndra App',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            // Opción: Mi Perfil
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Mi Perfil'),
+              onTap: () {
+                Navigator.pop(context); // Cierra el Drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PerfilScreen(),
+                  ),
+                );
+              },
+            ),
+            // Opción: Especificaciones del Software
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Especificaciones del Software'),
+              onTap: () {
+                Navigator.pop(context); // Cierra el Drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SoftwareSpecsScreen(),
+                  ),
+                );
+              },
+            ),
+            // Separador (Opcional)
+            const Divider(),
+            // Opción: Configuración
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Configuración'),
+              onTap: () {
+                Navigator.pop(context); // Cierra el Drawer
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Configuración presionado')),
+                );
+                // Aquí podrías navegar a una pantalla de Configuración
+              },
+            ),
+            // Opción: Ayuda y Preguntas Frecuentes
+            ListTile(
+              leading: const Icon(Icons.help_outline),
+              title: const Text('Ayuda y Preguntas Frecuentes'),
+              onTap: () {
+                Navigator.pop(context); // Cierra el Drawer
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Ayuda presionado')),
+                );
+                // Aquí podrías navegar a una pantalla de Ayuda
+              },
+            ),
+            // <--- Botón de Cerrar Sesión (Logout) --->
+            ListTile(
+              leading: const Icon(Icons.exit_to_app, color: Colors.red),
+              title: const Text(
+                'Cerrar Sesión',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () {
+                Navigator.pop(
+                  context,
+                ); // Cierra el Drawer antes de cerrar sesión
+                _logout(); // Llama a tu función de cerrar sesión
+              },
+            ),
+          ],
+        ),
+      ),
+
+      // <--- FIN: Implementación del Menú Lateral (Drawer) --->
 
       body: IndexedStack(index: _selectedTabIndex, children: _screens),
 
