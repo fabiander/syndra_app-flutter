@@ -9,6 +9,7 @@ import 'package:syndra_app/texto/tipoletra.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide State;
 import 'package:syndra_app/mainmenu/menu.dart';
+import 'package:syndra_app/olvidopasword/ventanasdialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,37 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> showCustomAlertDialog({
-    required BuildContext context,
-    required IconData icon,
-    required String message,
-    required String buttonText,
-    required Color buttonColor,
-    required Color borderColor,
-  }) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          icon: Icon(icon, color: buttonColor),
-          title: const Text('Aviso'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: buttonColor,
-                side: BorderSide(color: borderColor),
-              ),
-              child: Text(buttonText),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Future<void> _handleLogin() async {
     final email = emailController.text.trim();
@@ -67,12 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (email.isEmpty || contrasena.isEmpty) {
       await showCustomAlertDialog(
         context: context,
-        icon: Icons.warning,
-        message:
-            'Por favor, completa todos los campos (Correo electrónico y Contraseña).',
+        icon: Icons.error,
+        message: 'Por favor, ingrese email, contraseña.',
+        buttonColor: Colors.redAccent,
         buttonText: 'Aceptar',
-        buttonColor: Colors.amberAccent,
-        borderColor: Colors.amberAccent,
+        borderColor: Colors.redAccent,
+        
       );
       return;
     }
@@ -109,8 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: Icons.error,
           message: 'Correo electrónico o contraseña incorrectos.',
           buttonText: 'Aceptar',
-          buttonColor: Colors.amberAccent,
-          borderColor: Colors.amberAccent,
+          buttonColor: Colors.redAccent,
+          borderColor: Colors.redAccent,
         );
       }
     } catch (e) {

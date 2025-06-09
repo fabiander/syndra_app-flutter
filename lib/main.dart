@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Syndra App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginScreen(),
+      home: Menu(),
 
       routes: {
         '/intro1': (context) => const Intro1(),

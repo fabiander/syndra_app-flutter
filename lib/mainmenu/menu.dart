@@ -15,6 +15,7 @@ import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
 import 'package:syndra_app/tarjetas/admitirproblema.dart';
 import 'package:syndra_app/tarjetas/reconocimiento.dart';
+import 'package:syndra_app/tarjetas/aceptar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syndra_app/login/login_screen.dart';
 
@@ -276,7 +277,8 @@ class _HomeMenuScreenState extends State<Menu> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const Reconocimiento(),
+                              builder: (context) => ReconocerProblema( onProblemAdmitted: () {},
+                              ),
                             ),
                           );
                         },
@@ -289,7 +291,19 @@ class _HomeMenuScreenState extends State<Menu> {
                         backgroundColor: fondoBoton,
                         textColor: textoBoton,
                         width: anchoBoton,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                              AceptarProblemaScreen(onProblemAdmitted: () {}),
+                            ),
+                          );
+
+
+
+
+                        },
                       ),
 
                       const SizedBox(height: 30),
