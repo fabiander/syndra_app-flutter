@@ -139,7 +139,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                           child: AbsorbPointer(
                             // clase paar que no aparesca teclado
                             child: cajastexto(
-                              hint: 'Edad',
+                              hint: 'Fecha de nacimiento',
                               icon: Icons.calendar_today,
                               controller: edadController,
                             ),

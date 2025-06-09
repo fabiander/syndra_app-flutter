@@ -15,6 +15,8 @@ import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/botones_base/boton_fantasma.dart';
 import 'package:syndra_app/tarjetas/admitirproblema.dart';
 import 'package:syndra_app/tarjetas/reconocimiento.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syndra_app/login/login_screen.dart';
 
 // Importa tu clase MongoDatabase (descomenta cuando uses MongoDB real)
 // import 'package:syndra_app/data/connection.dart'; // <--- Asegúrate de que esta ruta sea correcta
@@ -34,8 +36,10 @@ class _HomeMenuScreenState extends State<Menu> {
   final ScrollController _scrollController = ScrollController();
   int _selectedTabIndex = 0;
 
-  final String _loggedInUserName = "Fabian"; // Nombre de usuario de ejemplo
+  //final String _loggedInUserName = "Fabian"; // Nombre de usuario de ejemplo
   String _surveyInfoText = "Cargando..."; // Valor inicial para la AppBar
+  String _username = 'Cargando...';
+  String _freeTextAnswer = 'Por mi madre'; // Valor por defecto
 
   final fondoBoton = const Color.fromRGBO(163, 217, 207, 1.0);
   final textoBoton = const Color.fromRGBO(33, 78, 62, 1.0);
@@ -66,6 +70,25 @@ class _HomeMenuScreenState extends State<Menu> {
         // Lógica de scroll si la necesitas
       });
     });
+
+    _loadUsername(); //  iniciacion del metodo
+  }
+
+  //  METODO  PAR ACRAGAR USUARIOO
+  Future<void> _loadUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString(
+      'loggedInUsername',
+    ); //  aqui llama el logged que contiene el usario y lo guara en la variable username
+    if (username != null && username.isNotEmpty) {
+      setState(() {
+        _username = username; // Actualiza el estado con el nombre de usuario
+      });
+    } else {
+      setState(() {
+        _username = 'Usuario'; // Valor por defecto si no se encuentra
+      });
+    }
   }
 
   Future<void> _loadInitialData() async {
@@ -78,45 +101,52 @@ class _HomeMenuScreenState extends State<Menu> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    // MongoDatabase.close(); // Descomenta si usas MongoDB y cierras la conexión
+    _scrollController.dispose(); // cierra  la  conexion
     super.dispose();
   }
 
-  void _showSurveyInitialDialog() {
-    if (_hasCompletedSurvey) {
-      return;
-    }
+  void _showSurveyInitialDialog({String? initialFreeText, int? initialPage}) {
+    if (_hasCompletedSurvey && initialFreeText == null && initialPage == null) return;
     setState(() {
       _isSurveyActive = true;
     });
-    showGeneralDialog(
+
+    showGeneralDialog( 
       context: context,
       barrierDismissible: false,
       barrierColor: const Color.fromRGBO(63, 140, 112, 0.5),
       transitionDuration: const Duration(milliseconds: 300),
+
       pageBuilder:
           (
             BuildContext buildContext,
             Animation animation,
             Animation secondaryAnimation,
           ) {
+
+
             return SurveyOverlay(
-              onSurveyCompleted: () {
+              onSurveyCompleted: (String freeText) {
                 Navigator.of(context).pop();
                 setState(() {
                   _isSurveyActive = false;
                   _hasCompletedSurvey = true;
                   _showCountersScreen = true;
                   _selectedTabIndex = 0;
+                  _freeTextAnswer = freeText;
                 });
               },
+
+
+
               onExitSurvey: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); //  cierra el diálogo
                 setState(() {
                   _isSurveyActive = false;
                 });
               },
+              initialFreeText: initialFreeText,
+              initialPage: initialPage,
             );
           },
     );
@@ -129,29 +159,21 @@ class _HomeMenuScreenState extends State<Menu> {
   }
 
   // --- NUEVA FUNCIÓN: Maneja la acción de salir de la aplicación ---
-  void _onLogout() {
-    // Aquí puedes añadir la lógica para cerrar sesión (ej. borrar token, etc.)
-    // Y luego navegar a la pantalla de inicio de sesión o cerrar la aplicación.
+  Future<void> _logout() async {
+    // 1. Clear SharedPreferences data
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('loggedInUserId');
+    await prefs.remove('loggedInUserEmail');
+    await prefs.remove('loggedInUsername');
 
-    // Ejemplo: Mostrar un SnackBar y luego cerrar la aplicación (no recomendado sin un inicio de sesión)
-    // En una aplicación real, probablemente navegarías a una pantalla de inicio de sesión.
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Cerrando sesión...')));
-
-    // Para cerrar la aplicación completamente (no siempre deseable en Flutter)
-    // import 'dart:io'; // Necesitas importar esto al inicio del archivo
-    // exit(0);
-
-    // Más comúnmente, navegarías a la pantalla de login/bienvenida
-    Navigator.of(context).popUntil(
-      (route) => route.isFirst,
-    ); // Vuelve a la primera ruta (ej. LoginScreen)
-    // O navega a una pantalla específica:
-    // Navigator.of(context).pushAndRemoveUntil(
-    //   MaterialPageRoute(builder: (context) => const LoginScreen()), // Reemplaza LoginScreen con tu pantalla de inicio de sesión
-    //   (Route<dynamic> route) => false,
-    // );
+    if (mounted) {
+      // It's good practice to check if the widget is still mounted before using context for navigation
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) =>
+            false, // This condition removes all routes from the stack
+      );
+    }
   }
 
   @override
@@ -203,12 +225,20 @@ class _HomeMenuScreenState extends State<Menu> {
                       ),
                       const SizedBox(height: 15),
 
+
+
                       BotonFantasma(
-                        label: 'Por mi madre',
+                        label: _freeTextAnswer,
                         borderColor: Color.fromRGBO(120, 190, 180, 1.0),
-                        onPressed: null,
                         width: anchoBoton,
+                        onPressed: (){
+                          _showSurveyInitialDialog(
+                            initialFreeText: _freeTextAnswer,initialPage: 4 /* índice de la pregunta de propósito, ej. 0 o 4 */,
+                            );
+                            },
                       ),
+
+
 
                       const SizedBox(height: 30),
                       const AnimatedInfoBox(),
@@ -303,9 +333,9 @@ class _HomeMenuScreenState extends State<Menu> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: MyAppBarWidget(
-        userName: _loggedInUserName,
+        userName: _username,
         surveyDataText: _surveyInfoText,
-        onLogoutPressed: _onLogout, // <--- Conectamos el callback aquí
+        onLogoutPressed: _logout, // <--- Conectamos el callback aquí
       ),
 
       drawer: const Drawer(child: Center(child: Text('Menú Lateral (Drawer)'))),

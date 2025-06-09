@@ -27,7 +27,9 @@ dependencies:
   # ¡IMPORTANTE! Cambia esta versión para que sea compatible con youtube_player_flutter ^9.1.1
   # y para evitar el error de "Namespace not specified" con tu Flutter moderno.
   flutter_inappwebview: ^6.1.5 # <--- Sugiero ^6.1.5 (la última disponible que vimos)
-                               # Si ^6.1.5 da problemas, puedes probar con ^6.0.0
+   # Si ^6.1.5 da problemas, puedes probar con ^6.0.0
+  shared_preferences: ^2.2.0
+
 
 
 dev_dependencies:

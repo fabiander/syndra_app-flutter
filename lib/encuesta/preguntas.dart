@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:syndra_app/colores_espacios/tonoscolores.dart';
+import 'package:syndra_app/olvidopasword/ventanasdialog.dart';
 import 'package:syndra_app/encuesta/inicio.dart'; // Asegúrate de que esta ruta sea correcta para tu modelo Question
 
 class SurveyOverlay extends StatefulWidget {
-  final VoidCallback
-  onSurveyCompleted; // Callback para cuando la encuesta termine
-  final VoidCallback
-  onExitSurvey; // Callback para cuando el usuario sale de la encuesta
+  final void Function(String freeText) onSurveyCompleted; // Callback para cuando la encuesta termine
+  final VoidCallback onExitSurvey; // Callback para cuando el usuario sale de la encuesta
+  final String? initialFreeText; // <-- Nuevo parámetro
+  final int? initialPage; // <-- Nuevo parámetro
+
 
   const SurveyOverlay({
     super.key,
     required this.onSurveyCompleted,
     required this.onExitSurvey,
+    this.initialFreeText,
+    this.initialPage,
   });
 
   @override
@@ -18,13 +23,13 @@ class SurveyOverlay extends StatefulWidget {
 }
 
 class _SurveyOverlayState extends State<SurveyOverlay> {
-  final PageController _pageController = PageController();
+  late PageController _pageController = PageController();
   int _currentPage = 0;
   // Aquí guardaremos las respuestas del usuario (clave: índice de pregunta, valor: respuesta String)
   final Map<int, String> _userAnswers = {};
 
   // Controlador para el TextField de texto libre
-  final TextEditingController _freeTextController = TextEditingController();
+  late  TextEditingController _freeTextController = TextEditingController();
 
   // Define tus 5 preguntas aquí
   final List<Question> _questions = [
@@ -68,6 +73,11 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
   @override
   void initState() {
     super.initState();
+      _freeTextController = TextEditingController(
+      text: widget.initialFreeText ?? '',
+    );
+    _currentPage = widget.initialPage ?? 0;
+    _pageController = PageController(initialPage: _currentPage);
     _pageController.addListener(() {
       if (_pageController.page?.round() != _currentPage) {
         setState(() {
@@ -81,6 +91,17 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
       }
     });
     _updateFreeTextController(); // Configura el controlador inicial al cargar el widget
+
+
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _currentPage = widget.initialPage ?? 0;
+        _updateFreeTextController();
+      });
+    });
+
+
   }
 
   // Método para actualizar el TextField con la respuesta guardada
@@ -91,20 +112,24 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
   }
 
   void _nextPage() {
-    final currentQuestion = _questions[_currentPage];
+    final currentQuestion = _questions[_currentPage];// questions todas las preguntas y  current numero de pregunta
 
     // Lógica de validación para preguntas de texto libre
-    if (currentQuestion.isFreeText == true) {
-      final text = _freeTextController.text.trim();
+    if (currentQuestion.isFreeText == true) { // revisa si es de opcion o de texto
+      final text = _freeTextController.text.trim();// revisa lo que ecribio en el cuadro
       if (text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Por favor, escribe tu respuesta para continuar.'),
-          ),
+        showCustomAlertDialog(  // Mensaje
+          context: context, // El contexto es necesario para mostrar diálogos
+          icon: Icons.error, // Puedes ajustar el icono si tu función lo requiere
+          buttonText: 'Error', // Título del diálogo
+          message: 'Escribe tu respuesta para continuar.', // Mensaje del diálogo
+          buttonColor: Colors.deepOrangeAccent, // Color de fondo del botón
+          borderColor: Colors.deepOrangeAccent,
         );
-        return;
+        return;  // espacios de texto
+      
       }
-      _userAnswers[_currentPage] = text; // Guarda el texto libre
+      _userAnswers[_currentPage] = text; // Guarda el texto libre en unser en la pocision currentpage
     }
     // Para preguntas de opciones, la validación y avance se hacen en _onOptionSelected.
     // Aquí solo se ejecuta si estamos en la última pregunta de texto libre O si se llama
@@ -120,8 +145,9 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
       print(
         'Encuesta completada. Respuestas: $_userAnswers',
       ); // Para depuración
-      widget
-          .onSurveyCompleted(); // Llama al callback para cerrar el overlay o navegar
+      widget.onSurveyCompleted(
+        _freeTextController.text.trim(),
+      ); // Llama al callback para cerrar el overlay o navegar
     }
   }
 
@@ -154,7 +180,8 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
 
   // Llama a este método cuando el usuario decida salir al menú
   void _exitSurvey() {
-    widget.onExitSurvey();
+    widget.onSurveyCompleted(_freeTextController.text.trim());
+    //widget.onExitSurvey(); // Llama al callback para salir de la encuesta
   }
 
   @override
@@ -163,19 +190,18 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Dialog(
-      backgroundColor:
-          Colors.transparent, // ✨ FONDODEL DIÁLOGO COMPLETAMENTE TRANSPARENTE ✨
+      backgroundColor:Colors.transparent, // ✨ FONDODEL DIÁLOGO COMPLETAMENTE TRANSPARENTE ✨
       clipBehavior: Clip.antiAlias,
       child: Center(
         child: Container(
           height: screenHeight * 0.8,
           width: screenWidth * 0.9,
           decoration: BoxDecoration(
-            color: Colors.white, // Fondo blanco para el contenido del diálogo
+            color: Colors.white.withValues(alpha: 1.0), 
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.7), 
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),
@@ -194,10 +220,12 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                   children: [
                     // Botón "Volver" (solo visible si no es la primera pregunta)
                     if (_currentPage > 0)
+
                       IconButton(
                         icon: const Icon(
                           Icons.arrow_back_ios,
-                          color: Color(0xFF6B45A8),
+                          color: ColoresApp.iconColor, // Color del icono
+                          // Puedes usar un color específico o uno de tu paleta
                           size: 28,
                         ),
                         onPressed: _previousPage,
@@ -224,7 +252,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                     IconButton(
                       icon: const Icon(
                         Icons.close, // Un ícono de "X" o cerrar
-                        color: Colors.grey,
+                        color: ColoresApp.iconColor,
                         size: 28,
                       ),
                       onPressed: _exitSurvey,
@@ -233,7 +261,7 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                   ],
                 ),
               ),
-              const Divider(height: 1, thickness: 1, color: Colors.grey),
+             
 
               Expanded(
                 child: PageView.builder(
@@ -278,10 +306,11 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                             Column(
                               // Usamos Column para el TextField y el botón Finalizar
                               children: [
+
+                                
                                 TextField(
                                   controller: _freeTextController,
-                                  maxLines:
-                                      1, // Esto hace la caja pequeña para 1 o 2 palabras
+                                  maxLines: 1, // Esto hace la caja pequeña para 1 o 2 palabras
                                   decoration: InputDecoration(
                                     hintText: 'Escribe tu propósito aquí...',
                                     border: OutlineInputBorder(
@@ -303,26 +332,29 @@ class _SurveyOverlayState extends State<SurveyOverlay> {
                                   keyboardType: TextInputType.text,
                                   textInputAction: TextInputAction.done,
                                 ),
+
                                 const SizedBox(
                                   height: 30,
                                 ), // Espacio entre el TextField y el botón
                                 // Botón "Finalizar" solo para la última pregunta de texto libre
-                                ElevatedButton(
-                                  onPressed:
-                                      _nextPage, // _nextPage manejará la finalización
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF6B45A8),
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                SizedBox(
+                                  width: 220, // El ancho que desees
+                                  child: ElevatedButton(
+                                    onPressed: _nextPage,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF6B45A8),
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                      ),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 15,
+                                    child: const Text(
+                                      'Finalizar',
+                                      style: TextStyle(fontSize: 18),
                                     ),
-                                  ),
-                                  child: const Text(
-                                    'Finalizar',
-                                    style: TextStyle(fontSize: 18),
                                   ),
                                 ),
                               ],

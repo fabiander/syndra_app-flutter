@@ -54,6 +54,10 @@ class MongoDatabase {
     return user;
   }
 
+
+
+
+
   static Future<Map<String, dynamic>?> findUserByEmail(String email) async {
     try {
       final user = await collection.findOne(where.eq('email', email));
@@ -98,4 +102,47 @@ class MongoDatabase {
   static Future<void> close() async {
     await db.close();
   }
+
+
+
+
+static Future<Map<String, dynamic>?> getUserById(String id) async {
+    try {
+      // 1. Bloque try-catch para manejo de errores
+
+      // 2. Asegurarse de que la conexión a la base de datos esté abierta.
+      if (!db.isConnected) {
+        // <-- Condición: ¿Está la DB conectada?
+        await connect(); // <-- Acción: Conectar si no lo está
+      }
+
+      // 3. MongoDB usa ObjectId para el campo _id.
+      // Necesitamos parsear la cadena de texto 'id' a un ObjectId.
+      final ObjectId objectId = ObjectId.parse(
+        id,
+      ); // <-- Conversión de String a ObjectId
+
+      // 4. Buscar un documento donde el _id coincida con el ObjectId.
+      final user = await collection.findOne(
+        where.eq('_id', objectId),
+      ); // <-- La consulta principal
+
+      // 5. Retorna el documento del usuario o null si no se encuentra.
+      return user; // <-- Devuelve el resultado de la consulta
+    } catch (e) {
+      // 6. Bloque catch para capturar y manejar errores
+      // Captura cualquier error (ej. formato de ID inválido, problemas de conexión)
+      print(
+        'Error al buscar usuario por ID ($id): $e',
+      ); // <-- Mensaje de error para depuración
+      return null; // <-- Retorna null en caso de error
+    }
+  }
+
+
+
+
+
+
+
 }
