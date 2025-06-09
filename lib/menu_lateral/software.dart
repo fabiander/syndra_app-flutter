@@ -12,12 +12,18 @@ class SoftwareSpecsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Especificaciones del Software',
+          style: counterLabelStyle.copyWith(
+            color: Colors.white,
+            fontSize: 20,
+            
+            ),
+          textAlign: TextAlign.center,  
           // Como no proporcionaste un estilo específico para el título de la AppBar
           // en el tipoletra.dart que enviaste, se usará el estilo por defecto de Flutter
           // o puedes definir uno si lo necesitas.
           // Si tienes un appbarTitleStyle en tu archivo completo, úsalo aquí.
           // Ejemplo: style: appbarTitleStyle,
-        ),
+        ),  
         backgroundColor: Theme.of(
           context,
         ).primaryColor, // Puedes ajustar esto a tu color de AppBar
@@ -25,6 +31,8 @@ class SoftwareSpecsScreen extends StatelessWidget {
           color: Colors.white,
         ), // Color del icono de retroceso en la AppBar
       ),
+
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -61,7 +69,7 @@ class SoftwareSpecsScreen extends StatelessWidget {
             Text('Tecnologías Utilizadas:', style: menuSectionTitleStyle),
             const SizedBox(height: 5),
             Text(
-              'Flutter (Framework UI), Dart (Lenguaje de Programación), SharedPreferences (Almacenamiento Local), [Tu Base de Datos, ej. MongoDB], etc.',
+              'Flutter (Framework UI), Dart (Lenguaje de Programación), SharedPreferences (Almacenamiento Local), [Base de Datos, MongoDB]',
               style: menuSectionTitleStyle,
             ),
             const SizedBox(height: 15),
@@ -74,7 +82,7 @@ class SoftwareSpecsScreen extends StatelessWidget {
             Text('Licencia:', style: menuSectionTitleStyle),
             const SizedBox(height: 5),
             Text(
-              'Propiedad de [Tu Organización/Nombre]. Todos los derechos reservados.',
+              'Propiedad de [Erwin fabian ortega navas]. Todos los derechos reservados.',
               style: menuSectionTitleStyle,
             ),
             const SizedBox(height: 15),

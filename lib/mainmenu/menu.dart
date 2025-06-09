@@ -185,7 +185,7 @@ class _HomeMenuScreenState extends State<Menu> {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double appBarHeight = AppBar().preferredSize.height;
     final double totalAppBarAreaHeight = statusBarHeight + appBarHeight;
-    final double bottomNavBarHeight = kBottomNavigationBarHeight;
+    final double bottomNavBarHeight = 05.0;
 
     final Widget homeScreenContent = Stack(
       children: [
