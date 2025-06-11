@@ -1,3 +1,6 @@
+
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';

@@ -29,6 +29,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5 # <--- Sugiero ^6.1.5 (la última disponible que vimos)
    # Si ^6.1.5 da problemas, puedes probar con ^6.0.0
   shared_preferences: ^2.2.0
+  url_launcher: ^6.2.6
 
 
 

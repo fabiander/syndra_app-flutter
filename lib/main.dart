@@ -8,7 +8,8 @@ import 'package:syndra_app/login/registro.dart';
 import 'package:syndra_app/mainmenu/menu.dart';
 import 'package:syndra_app/olvidopasword/verificacionemail.dart';
 import 'package:syndra_app/olvidopasword/cambiopasword.dart';
-import 'package:syndra_app/splash/splash_screen.dart';
+import 'package:syndra_app/encuesta/preguntas.dart';
+//import 'package:syndra_app/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'Syndra App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: SplashScreen(),
+      home: LoginScreen(),
 
       routes: {
         '/intro1': (context) => const Intro1(),
@@ -34,6 +35,8 @@ class MyApp extends StatelessWidget {
         '/registro': (context) => const RegistroScreen(),
         '/login': (context) => const LoginScreen(),
         '/menu': (context) => const Menu(),
+        '/preguntas': (context) => SurveyOverlay(onSurveyCompleted: (String freeText) {  }, onExitSurvey: () {  },),
+        
 
         // --- Nuevas rutas para el flujo de recuperación de contraseña ---
         // Ruta para la pantalla de verificación de email (primera etapa)

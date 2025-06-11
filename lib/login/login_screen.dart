@@ -1,4 +1,3 @@
-// dart
 import 'package:flutter/material.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
 import 'package:syndra_app/colores_espacios/tonoscolores.dart';
@@ -29,20 +28,19 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-
   Future<void> _handleLogin() async {
     final email = emailController.text.trim();
     final contrasena = passwordController.text.trim();
 
     if (email.isEmpty || contrasena.isEmpty) {
+      if (!mounted) return;
       await showCustomAlertDialog(
         context: context,
         icon: Icons.error,
-        message: 'Por favor, ingrese email, contraseña.',
+        message: 'Por favor, ingrese email y contraseña.',
         buttonColor: Colors.redAccent,
         buttonText: 'Aceptar',
         borderColor: Colors.redAccent,
-        
       );
       return;
     }
@@ -57,24 +55,110 @@ class _LoginScreenState extends State<LoginScreen> {
         final String? nombreUsuario = user['usuario'] as String?;
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('loggedInUserId', userIdString);// GUARDA EL ID
-        await prefs.setString('loggedInUserEmail', email);  // GUARDA  EL EMAIL
-        await prefs.setString(   // GUARDA EL USUARIO
+        await prefs.setString('loggedInUserId', userIdString);
+        await prefs.setString('loggedInUserEmail', email);
+        await prefs.setString(
           'loggedInUsername',
           (nombreUsuario != null && nombreUsuario.isNotEmpty)
               ? nombreUsuario
               : 'Usuario Genérico',
         );
 
-        if (mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const Menu()),
-            (Route<dynamic> route) => false,
+        // --- LÓGICA DE LAS 48 HORAS ---
+        final Map<String, dynamic>? currentUserData =
+            await MongoDatabase.getUserById(userIdString);
+
+        DateTime now = DateTime.now();
+        DateTime? startDate = currentUserData?['startDate'] as DateTime?;
+        Duration? difference;
+
+        if (startDate != null) {
+          difference = now.difference(startDate);
+
+          if (difference.inHours > 48) {
+            // Han pasado más de 48 horas: pregunta al usuario
+            if (!mounted) return;
+            final respuesta = await showDialog<String>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Han pasado más de 48 horas'),
+                content: const Text(
+                  '¿Quieres reiniciar tu progreso y volver a realizar la encuesta?\n\n'
+                  'Si eliges "Sí", tu progreso se reiniciará y deberás completar la encuesta.\n'
+                  'Si eliges "No", continuarás con tu progreso anterior.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'no'),
+                    child: const Text('No'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'si'),
+                    child: const Text('Sí'),
+                  ),
+                ],
+              ),
+            );
+
+            if (respuesta == 'si') {
+              // Reinicia el startDate, guarda en Mongo y muestra encuesta
+              await MongoDatabase.saveUserAbstinenceData(
+                userIdString,
+                now,
+                now,
+              );
+              if (!mounted) return;
+              await Navigator.of(context).pushReplacementNamed('/preguntas');
+              return;
+            } else if (respuesta == 'no') {
+              // Continúa con el mismo startDate y va directo al menú
+              if (!mounted) return;
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const Menu()),
+                (Route<dynamic> route) => false,
+              );
+              return;
+            }
+          } else {
+            // Menos de 48 horas: continúa con el startDate original
+            if (!mounted) return;
+            await showCustomAlertDialog(
+              context: context,
+              icon: Icons.check_circle,
+              message:
+                  '¡Bienvenido! Has mantenido tu progreso por ${difference.inMinutes} minutos.',
+              buttonColor: ColoresApp.iconColor,
+              borderColor: ColoresApp.iconColor,
+              buttonText: 'Entendido',
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const Menu()),
+              (Route<dynamic> route) => false,
+            );
+            return;
+          }
+        } else {
+          // Usuario nuevo: guarda la fecha de inicio y pide completar la encuesta
+          await MongoDatabase.saveUserAbstinenceData(userIdString, now, now);
+          if (!mounted) return;
+          await showCustomAlertDialog(
+            context: context,
+            icon: Icons.info,
+            message:
+                'Por favor completa la encuesta inicial para establecer tu fecha de inicio.',
+            buttonColor: ColoresApp.iconColor,
+            borderColor: ColoresApp.iconColor,
+            buttonText: 'Completar Encuesta',
           );
-        }
-      } else {
-        await showCustomAlertDialog(
           // ignore: use_build_context_synchronously
+          await Navigator.of(context).pushReplacementNamed('/preguntas');
+          return;
+        }
+        // --- FIN LÓGICA 48 HORAS ---
+      } else {
+        if (!mounted) return;
+        await showCustomAlertDialog(
           context: context,
           icon: Icons.error,
           message: 'Correo electrónico o contraseña incorrectos.',
@@ -84,8 +168,10 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
+      // ignore: avoid_print
+      print('Error en el login: $e');
+      if (!mounted) return;
       await showCustomAlertDialog(
-        // ignore: use_build_context_synchronously
         context: context,
         icon: Icons.error,
         message:
@@ -190,8 +276,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-
-
                                         BotonElevado(
                                           label: 'Ingresar',
                                           onPressed: _handleLogin,
@@ -209,9 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             style: menuSectionTitleStyle,
                                           ),
                                         ),
-
                                         Espacios.espacio05,
-
                                         TextButton(
                                           onPressed: () {
                                             Navigator.pushNamed(

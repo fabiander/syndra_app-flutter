@@ -214,12 +214,41 @@ class _RegistroScreenState extends State<RegistroScreen> {
                               return;
                             }
 
+                            try {
+                              final existingUser =
+                                  await MongoDatabase.findUserByEmail(email);
+                              if (existingUser != null) {
+                                await showCustomAlertDialog(
+                                  // ignore: use_build_context_synchronously
+                                  context: context,
+                                  icon: Icons.info,
+                                  message:
+                                      'Este correo electrónico ya está registrado. Por favor, usa otro.',
+                                  buttonColor: Colors.blueAccent,
+                                  borderColor: Colors.blueAccent,
+                                );
+                                return;
+                              }
+                            } catch (e) {
+                              await showCustomAlertDialog(
+                                // ignore: use_build_context_synchronously
+                                context: context,
+                                icon: Icons.error,
+                                message:
+                                    'Ocurrió un error al verificar el email. Inténtalo de nuevo.',
+                                buttonColor: Colors.redAccent,
+                                borderColor: Colors.redAccent,
+                              );
+                              return;
+                            }
+
                             var data = {
                               'nombre': nombre,
                               'edad': edad, // Usamos la edad validada
                               'email': email,
                               'usuario': usuario,
                               'contrasena': contrasena,
+                              'startDate': null,   
                             };
 
                             await MongoDatabase.insert(

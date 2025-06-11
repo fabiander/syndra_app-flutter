@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+// ignore: unnecessary_import
 import 'dart:ui';
-import 'package:syndra_app/bar_abajo/home.dart';
 import 'package:syndra_app/bar_abajo/estadisticas.dart';
 import 'package:syndra_app/bar_abajo/donaciones.dart';
 import 'package:syndra_app/bar_abajo/llamado.dart';
 import 'package:syndra_app/menu_lateral/perfil.dart';
 import 'package:syndra_app/bar_abajo/barfondo.dart';
-import 'package:syndra_app/bar_arrriba/arriba.dart'; // <--- Asegúrate de que esta ruta sea correcta
-import 'package:syndra_app/encuesta/preguntas.dart';
+import 'package:syndra_app/bar_arrriba/arriba.dart';
 import 'package:syndra_app/contadores/counters_carousel.dart';
 import 'package:syndra_app/texto/tipoletra.dart';
 import 'package:syndra_app/mainmenu/animacioncaja.dart';
@@ -20,10 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syndra_app/login/login_screen.dart';
 import 'package:syndra_app/tarjetas/chat.dart';
 import 'package:syndra_app/menu_lateral/software.dart';
-import 'package:syndra_app/menu_lateral/perfil.dart';
-
-// Importa tu clase MongoDatabase (descomenta cuando uses MongoDB real)
-// import 'package:syndra_app/data/connection.dart'; // <--- Asegúrate de que esta ruta sea correcta
+// IMPORTANTE: importa tu encuesta aquí
+import 'package:syndra_app/encuesta/preguntas.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -33,17 +30,16 @@ class Menu extends StatefulWidget {
 }
 
 class _HomeMenuScreenState extends State<Menu> {
-  bool _isSurveyActive = false;
-  bool _hasCompletedSurvey = false;
-  bool _showCountersScreen = false;
+  // ignore: prefer_final_fields
+  bool _showCountersScreen = true;
   final double _countersHeight = 350.0;
   final ScrollController _scrollController = ScrollController();
   int _selectedTabIndex = 0;
 
-  //final String _loggedInUserName = "Fabian"; // Nombre de usuario de ejemplo
-  String _surveyInfoText = "Cargando..."; // Valor inicial para la AppBar
+  String _surveyInfoText = "Cargando...";
   String _username = 'Cargando...';
-  String _freeTextAnswer = 'Por mi madre'; // Valor por defecto
+  String _freeTextAnswer = 'Por mi madre';
+  String _userIdString = '';
 
   final fondoBoton = const Color.fromRGBO(163, 217, 207, 1.0);
   final textoBoton = const Color.fromRGBO(33, 78, 62, 1.0);
@@ -60,44 +56,35 @@ class _HomeMenuScreenState extends State<Menu> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData(); // Llamamos a la función para cargar datos
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_hasCompletedSurvey) {
-        _showSurveyInitialDialog();
-      } else {
-        setState(() {
-          _showCountersScreen = true;
-          _selectedTabIndex = 0;
-        });
-      }
-      _scrollController.addListener(() {
-        // Lógica de scroll si la necesitas
-      });
-    });
-
-    _loadUsername(); //  iniciacion del metodo
+    _loadInitialData();
+    _loadUsername();
+    _loadUserId();
   }
 
-  //  METODO  PAR ACRAGAR USUARIOO
   Future<void> _loadUsername() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString(
-      'loggedInUsername',
-    ); //  aqui llama el logged que contiene el usario y lo guara en la variable username
+    final username = prefs.getString('loggedInUsername');
     if (username != null && username.isNotEmpty) {
       setState(() {
-        _username = username; // Actualiza el estado con el nombre de usuario
+        _username = username;
       });
     } else {
       setState(() {
-        _username = 'Usuario'; // Valor por defecto si no se encuentra
+        _username = 'Usuario';
       });
     }
   }
 
+  Future<void> _loadUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userIdString = prefs.getString('loggedInUserId') ?? '';
+    });
+  }
+
   Future<void> _loadInitialData() async {
     await Future.delayed(const Duration(seconds: 2));
-    String dataFromDatabase = "Marihuana"; // Dato simulado de la BD
+    String dataFromDatabase = "Marihuana";
     setState(() {
       _surveyInfoText = dataFromDatabase;
     });
@@ -105,55 +92,8 @@ class _HomeMenuScreenState extends State<Menu> {
 
   @override
   void dispose() {
-    _scrollController.dispose(); // cierra  la  conexion
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _showSurveyInitialDialog({String? initialFreeText, int? initialPage}) {
-    if (_hasCompletedSurvey && initialFreeText == null && initialPage == null) return;
-    setState(() {
-      _isSurveyActive = true;
-    });
-
-    showGeneralDialog( 
-      context: context,
-      barrierDismissible: false,
-      barrierColor: const Color.fromRGBO(63, 140, 112, 0.5),
-      transitionDuration: const Duration(milliseconds: 300),
-
-      pageBuilder:
-          (
-            BuildContext buildContext,
-            Animation animation,
-            Animation secondaryAnimation,
-          ) {
-
-
-            return SurveyOverlay(
-              onSurveyCompleted: (String freeText) {
-                Navigator.of(context).pop();
-                setState(() {
-                  _isSurveyActive = false;
-                  _hasCompletedSurvey = true;
-                  _showCountersScreen = true;
-                  _selectedTabIndex = 0;
-                  _freeTextAnswer = freeText;
-                });
-              },
-
-
-
-              onExitSurvey: () {
-                Navigator.of(context).pop(); //  cierra el diálogo
-                setState(() {
-                  _isSurveyActive = false;
-                });
-              },
-              initialFreeText: initialFreeText,
-              initialPage: initialPage,
-            );
-          },
-    );
   }
 
   void _onBottomNavItemTapped(int index) {
@@ -162,20 +102,16 @@ class _HomeMenuScreenState extends State<Menu> {
     });
   }
 
-  // --- NUEVA FUNCIÓN: Maneja la acción de salir de la aplicación ---
   Future<void> _logout() async {
-    // 1. Clear SharedPreferences data
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('loggedInUserId');
     await prefs.remove('loggedInUserEmail');
     await prefs.remove('loggedInUsername');
 
     if (mounted) {
-      // It's good practice to check if the widget is still mounted before using context for navigation
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (Route<dynamic> route) =>
-            false, // This condition removes all routes from the stack
+        (Route<dynamic> route) => false,
       );
     }
   }
@@ -185,7 +121,7 @@ class _HomeMenuScreenState extends State<Menu> {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double appBarHeight = AppBar().preferredSize.height;
     final double totalAppBarAreaHeight = statusBarHeight + appBarHeight;
-    final double bottomNavBarHeight = 05.0;
+    final double bottomNavBarHeight = 5.0;
 
     final Widget homeScreenContent = Stack(
       children: [
@@ -206,7 +142,9 @@ class _HomeMenuScreenState extends State<Menu> {
                 if (_showCountersScreen)
                   SizedBox(
                     height: _countersHeight,
-                    child: const CountersCarousel(),
+                    child: _userIdString.isNotEmpty
+                        ? CountersCarousel(userId: _userIdString)
+                        : const SizedBox.shrink(),
                   ),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -220,7 +158,6 @@ class _HomeMenuScreenState extends State<Menu> {
                         : BorderRadius.zero,
                   ),
                   child: Column(
-                    //crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Text(
                         'Por qué estoy haciendo esto',
@@ -228,49 +165,54 @@ class _HomeMenuScreenState extends State<Menu> {
                         style: menuSectionTitleStyle,
                       ),
                       const SizedBox(height: 15),
-
-
-
                       BotonFantasma(
                         label: _freeTextAnswer,
-                        borderColor: Color.fromRGBO(120, 190, 180, 1.0),
+                        borderColor: const Color.fromRGBO(120, 190, 180, 1.0),
                         width: anchoBoton,
-                        onPressed: (){
-                          _showSurveyInitialDialog(
-                            initialFreeText: _freeTextAnswer,initialPage: 4 /* índice de la pregunta de propósito, ej. 0 o 4 */,
-                            );
-                            },
+                        onPressed: () async {
+                          // Abre la encuesta en la pregunta 5 (índice 4)
+                          final nuevoTexto = await Navigator.of(context)
+                              .push<String>(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SurveyOverlay(
+                                        initialPage: 4,
+                                        onSurveyCompleted: (result) {
+                                          // Maneja el resultado de la encuesta aquí si es necesario
+                                        },
+                                        onExitSurvey: () {
+                                          // Maneja la salida de la encuesta aquí si es necesario
+                                        },
+                                      ),
+                                ),
+                              );
+                          if (nuevoTexto != null && nuevoTexto.isNotEmpty) {
+                            setState(() {
+                              _freeTextAnswer = nuevoTexto;
+                            });
+                          }
+                        },
                       ),
-
-
-
                       const SizedBox(height: 30),
                       const AnimatedInfoBox(),
                       const SizedBox(height: 40),
-
                       BotonElevado(
                         label: 'Admitir un problema',
                         backgroundColor: fondoBoton,
                         textColor: textoBoton,
                         width: anchoBoton,
                         onPressed: () {
-                          if (!_hasCompletedSurvey) {
-                            _showSurveyInitialDialog();
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AdmitirProblemaScreen(
-                                  onProblemAdmitted: () {},
-                                ),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AdmitirProblemaScreen(
+                                onProblemAdmitted: () {},
                               ),
-                            );
-                          }
+                            ),
+                          );
                         },
                       ),
-
                       const SizedBox(height: 30),
-
                       BotonElevado(
                         label: 'Reconoce tu problema',
                         backgroundColor: fondoBoton,
@@ -280,15 +222,13 @@ class _HomeMenuScreenState extends State<Menu> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ReconocerProblema( onProblemAdmitted: () {},
-                              ),
+                              builder: (context) =>
+                                  ReconocerProblema(onProblemAdmitted: () {}),
                             ),
                           );
                         },
                       ),
-
                       const SizedBox(height: 30),
-
                       BotonElevado(
                         label: 'Aceptar la adicción',
                         backgroundColor: fondoBoton,
@@ -298,35 +238,28 @@ class _HomeMenuScreenState extends State<Menu> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                              AceptarProblemaScreen(onProblemAdmitted: () {}),
+                              builder: (context) => AceptarProblemaScreen(
+                                onProblemAdmitted: () {},
+                              ),
                             ),
                           );
-
-
-
-
                         },
                       ),
-
                       const SizedBox(height: 30),
-
                       BotonElevado(
                         label: 'Vamos a la práctica',
                         backgroundColor: fondoBoton,
                         textColor: textoBoton,
                         width: anchoBoton,
                         onPressed: () {
-                          // Reemplaza el SnackBar por la navegación al ChatScreen
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const ChatScreen(),
-                            ), 
+                            ),
                           );
                         },
                       ),
-
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -335,38 +268,24 @@ class _HomeMenuScreenState extends State<Menu> {
             ),
           ),
         ),
-
-        if (_isSurveyActive)
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              // ignore: deprecated_member_use
-              child: Container(color: Colors.black.withOpacity(0.1)),
-            ),
-          ),
       ],
     );
 
-    _screens[0] = _hasCompletedSurvey ? homeScreenContent : const HomeScreen();
+    _screens[0] = homeScreenContent;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: MyAppBarWidget(
         userName: _username,
         surveyDataText: _surveyInfoText,
-        onLogoutPressed: _logout, // <--- Conectamos el callback aquí
+        onLogoutPressed: _logout,
       ),
-
-      // <--- ¡NUEVO! Implementación del Menú Lateral (Drawer) --->
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            // Encabezado del Drawer (Información de usuario)
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor, // Usa tu color primario
-              ),
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -396,26 +315,22 @@ class _HomeMenuScreenState extends State<Menu> {
                 ],
               ),
             ),
-            // Opción: Mi Perfil
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Mi Perfil'),
               onTap: () {
-                Navigator.pop(context); // Cierra el Drawer
+                Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const PerfilScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const PerfilScreen()),
                 );
               },
             ),
-            // Opción: Especificaciones del Software
             ListTile(
               leading: const Icon(Icons.info),
               title: const Text('Especificaciones del Software'),
               onTap: () {
-                Navigator.pop(context); // Cierra el Drawer
+                Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -424,33 +339,27 @@ class _HomeMenuScreenState extends State<Menu> {
                 );
               },
             ),
-            // Separador (Opcional)
             const Divider(),
-            // Opción: Configuración
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Configuración'),
               onTap: () {
-                Navigator.pop(context); // Cierra el Drawer
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Configuración presionado')),
                 );
-                // Aquí podrías navegar a una pantalla de Configuración
               },
             ),
-            // Opción: Ayuda y Preguntas Frecuentes
             ListTile(
               leading: const Icon(Icons.help_outline),
               title: const Text('Ayuda y Preguntas Frecuentes'),
               onTap: () {
-                Navigator.pop(context); // Cierra el Drawer
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Ayuda presionado')),
                 );
-                // Aquí podrías navegar a una pantalla de Ayuda
               },
             ),
-            // <--- Botón de Cerrar Sesión (Logout) --->
             ListTile(
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text(
@@ -458,20 +367,14 @@ class _HomeMenuScreenState extends State<Menu> {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () {
-                Navigator.pop(
-                  context,
-                ); // Cierra el Drawer antes de cerrar sesión
-                _logout(); // Llama a tu función de cerrar sesión
+                Navigator.pop(context);
+                _logout();
               },
             ),
           ],
         ),
       ),
-
-      // <--- FIN: Implementación del Menú Lateral (Drawer) --->
-
       body: IndexedStack(index: _selectedTabIndex, children: _screens),
-
       bottomNavigationBar: MyBottomNavBar(
         currentIndex: _selectedTabIndex,
         onTap: _onBottomNavItemTapped,

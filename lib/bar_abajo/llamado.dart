@@ -1,6 +1,6 @@
-// lib/barfondo/llamado.dart
 import 'package:flutter/material.dart';
 import 'package:syndra_app/texto/tipoletra.dart'; // Para tus estilos de texto
+import 'package:url_launcher/url_launcher.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart'; // Para tu BotonElevado
 
 class LlamadoScreen extends StatefulWidget {
@@ -35,37 +35,48 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
     super.dispose();
   }
 
-  void _callPadrino() {
-    // Lógica simulada de llamada
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Simulando llamada a tu Padrino...'),
-        backgroundColor: Colors.blueAccent,
-      ),
-    );
-    // Aquí iría la integración real con `url_launcher` para hacer una llamada
-    // Ejemplo: launchUrl(Uri.parse('tel:+1234567890'));
+  void _callPadrino() async {
+    const phoneNumber =
+        '+573001234567'; // Cambia por el número real de tu padrino
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo iniciar la llamada.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  void _sendMessage() {
-    // Lógica simulada de envío de mensaje
+  void _sendMessage() async {
     String message = _messageController.text.trim();
     if (message.isEmpty) {
       message =
           'Necesito hablar contigo.'; // Mensaje predeterminado si el campo está vacío
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Simulando envío de mensaje: "$message" a tu Padrino...'),
-        backgroundColor: Colors.orange,
-      ),
+    // Ejemplo de envío por SMS (puedes cambiar el número)
+    final Uri smsUri = Uri(
+      scheme: 'sms',
+      path: '+573153309870', // Cambia por el número real de tu padrino
+      queryParameters: <String, String>{'body': message},
     );
-    _messageController.clear(); // Limpiar el campo después de "enviar"
 
-    // Aquí iría la integración real con `url_launcher` para enviar SMS/WhatsApp
-    // Ejemplo SMS: launchUrl(Uri.parse('sms:+1234567890?body=$message'));
-    // Ejemplo WhatsApp: launchUrl(Uri.parse('whatsapp://send?phone=+1234567890&text=$message'));
+    if (await canLaunchUrl(smsUri)) {
+      await launchUrl(smsUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudo enviar el mensaje.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    _messageController.clear(); // Limpiar el campo después de "enviar"
   }
 
   @override
@@ -73,8 +84,7 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mi Padrino', style: TextStyle(color: Colors.white)),
-        backgroundColor:
-            _primaryButtonBg, // Usando el color de AppBar consistente
+        backgroundColor: _primaryButtonBg,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -103,9 +113,9 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
               onPressed: _callPadrino,
               backgroundColor: _primaryButtonBg,
               textColor: _primaryButtonText,
-              width: 280, // Ancho consistente para los botones principales
+              width: 280,
               height: 60,
-              elevation: 8.0, // Un poco más de elevación para resaltar
+              elevation: 8.0,
             ),
             const SizedBox(height: 30),
 
@@ -118,11 +128,10 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
 
             TextField(
               controller: _messageController,
-              maxLines: 3, // Permite múltiples líneas para un mensaje
+              maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Ej: "Necesito un momento, ¿puedes hablar?"',
                 hintStyle: TextStyle(
-                  // ignore: deprecated_member_use
                   color: _secondaryButtonText.withOpacity(0.5),
                 ),
                 border: OutlineInputBorder(
@@ -134,7 +143,6 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
                   borderSide: BorderSide(color: _primaryButtonBg, width: 2),
                 ),
                 filled: true,
-                // ignore: deprecated_member_use
                 fillColor: Colors.white.withOpacity(0.9),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 15.0,
@@ -148,10 +156,8 @@ class _LlamadoScreenState extends State<LlamadoScreen> {
             BotonElevado(
               label: 'Enviar Mensaje',
               onPressed: _sendMessage,
-              backgroundColor:
-                  _secondaryButtonBg, // Usando el color de fondo claro
-              textColor:
-                  _secondaryButtonText, // Usando el color de texto oscuro
+              backgroundColor: _secondaryButtonBg,
+              textColor: _secondaryButtonText,
               width: 280,
               height: 55,
             ),

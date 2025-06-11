@@ -1,3 +1,4 @@
+// dart
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:syndra_app/data/constante.dart';
 
@@ -19,24 +20,21 @@ class MongoDatabase {
     return await collection.find().toList();
   }
 
-
-
   static Future<bool> updateDocumentById(
     String id,
     Map<String, dynamic> data,
   ) async {
-    
-    var modifier = ModifierBuilder(); // metodo de mongo interno
+    var modifier = ModifierBuilder();
     data.forEach((key, value) {
-    modifier.set(key, value);
+      modifier.set(key, value);
     });
-    
-    final updateResult = await collection.updateOne( // busca el id y cambia la contraseña
+
+    final updateResult = await collection.updateOne(
       where.eq('_id', ObjectId.parse(id)),
       modifier,
-      );
+    );
 
-      return updateResult.nModified ==  1; //  si el resultado  es igual a 1 retorna la variable caso contrario error
+    return updateResult.nModified == 1;
   }
 
   static Future<void> delete(String id) async {
@@ -54,10 +52,6 @@ class MongoDatabase {
     return user;
   }
 
-
-
-
-
   static Future<Map<String, dynamic>?> findUserByEmail(String email) async {
     try {
       final user = await collection.findOne(where.eq('email', email));
@@ -72,7 +66,6 @@ class MongoDatabase {
     String newPassword,
   ) async {
     try {
-
       final userExists = await collection.findOne(where.eq('email', email));
       if (userExists == null) {
         return false;
@@ -85,7 +78,6 @@ class MongoDatabase {
 
       final matchedCount = updateResult.nMatched;
       final modifiedCount = updateResult.nModified;
-
 
       if (modifiedCount == 1) {
         return true;
@@ -103,46 +95,37 @@ class MongoDatabase {
     await db.close();
   }
 
-
-
-
-static Future<Map<String, dynamic>?> getUserById(String id) async {
+  static Future<Map<String, dynamic>?> getUserById(String id) async {
     try {
-      // 1. Bloque try-catch para manejo de errores
-
-      // 2. Asegurarse de que la conexión a la base de datos esté abierta.
       if (!db.isConnected) {
-        // <-- Condición: ¿Está la DB conectada?
-        await connect(); // <-- Acción: Conectar si no lo está
+        await connect();
       }
+      final ObjectId objectId = ObjectId.parse(id);
 
-      // 3. MongoDB usa ObjectId para el campo _id.
-      // Necesitamos parsear la cadena de texto 'id' a un ObjectId.
-      final ObjectId objectId = ObjectId.parse(
-        id,
-      ); // <-- Conversión de String a ObjectId
+      final user = await collection.findOne(where.eq('_id', objectId));
 
-      // 4. Buscar un documento donde el _id coincida con el ObjectId.
-      final user = await collection.findOne(
-        where.eq('_id', objectId),
-      ); // <-- La consulta principal
-
-      // 5. Retorna el documento del usuario o null si no se encuentra.
-      return user; // <-- Devuelve el resultado de la consulta
+      return user;
     } catch (e) {
-      // 6. Bloque catch para capturar y manejar errores
-      // Captura cualquier error (ej. formato de ID inválido, problemas de conexión)
-      print(
-        'Error al buscar usuario por ID ($id): $e',
-      ); // <-- Mensaje de error para depuración
-      return null; // <-- Retorna null en caso de error
+      return null;
     }
   }
 
 
+static Future<void> saveUserAbstinenceData(
+    String userId,
+    DateTime startDate,
+    DateTime lastAppOpenDate,
+  ) async {
+    if (!db.isConnected) await connect();
 
+    final ObjectId userObjectId = ObjectId.parse(userId);
 
-
-
-
+    await collection.update(
+      where.eq('_id', userObjectId),
+      ModifierBuilder()
+          .set('startDate', startDate)
+          .set('lastAppOpenDate', lastAppOpenDate),
+      upsert: true,
+    );
+  }
 }
