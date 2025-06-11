@@ -1,7 +1,7 @@
-// lib/donaciones/donations_screen.dart
 import 'package:flutter/material.dart';
-import 'package:syndra_app/texto/tipoletra.dart'; // Para usar tus estilos de texto
-import 'package:syndra_app/botones_base/boton_elevado.dart'; // Para usar tu BotonElevado
+import 'package:syndra_app/texto/tipoletra.dart';
+import 'package:syndra_app/botones_base/boton_elevado.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DonationsScreen extends StatefulWidget {
   const DonationsScreen({super.key});
@@ -12,21 +12,10 @@ class DonationsScreen extends StatefulWidget {
 
 class _DonationsScreenState extends State<DonationsScreen> {
   final TextEditingController _amountController = TextEditingController();
-  double _selectedAmount = 0.0; // Cantidad seleccionada o ingresada
+  double _selectedAmount = 0.0;
 
-  // Definimos los colores base para el botón de donación
-  final Color _donationButtonBg = const Color.fromRGBO(
-    163,
-    217,
-    207,
-    1.0,
-  ); // Tu color de fondo claro
-  final Color _donationButtonText = const Color.fromRGBO(
-    33,
-    78,
-    62,
-    1.0,
-  ); // Tu color de texto oscuro
+  final Color _donationButtonBg = const Color.fromRGBO(163, 217, 207, 1.0);
+  final Color _donationButtonText = const Color.fromRGBO(33, 78, 62, 1.0);
 
   @override
   void dispose() {
@@ -34,60 +23,63 @@ class _DonationsScreenState extends State<DonationsScreen> {
     super.dispose();
   }
 
-  void _processDonation() {
-    // Aquí iría la lógica real para procesar la donación.
-    // Por ahora, solo mostraremos un mensaje simulado.
-
-    // Intentar parsear el texto del controlador si hay una cantidad personalizada
-    if (_amountController.text.isNotEmpty) {
-      final customAmount = double.tryParse(_amountController.text);
-      if (customAmount != null && customAmount > 0) {
-        _selectedAmount = customAmount;
-      } else {
-        // Si no se pudo parsear o es 0/negativo, y no hay cantidad predefinida seleccionada,
-        // avisar al usuario.
-        if (_selectedAmount == 0.0) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Por favor, ingresa una cantidad válida para donar.',
-              ),
-              backgroundColor: Colors.red,
-            ),
-          );
-          return; // Salir de la función si no hay cantidad válida
-        }
-      }
+  Future<void> _processDonation() async {
+    final monto = _selectedAmount > 0
+        ? _selectedAmount.toInt()
+        : (double.tryParse(_amountController.text) ?? 0).toInt();
+    if (monto <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Selecciona o ingresa un monto válido antes de donar.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    // Cambia el número por el de tu cuenta Daviplata
+    final phone = '3001234567';
+    final url = Uri.parse('daviplata://sendmoney?phone=$phone&amount=$monto');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
-      // Si el campo está vacío, asegúrate de que se haya seleccionado una cantidad predefinida
-      if (_selectedAmount == 0.0) {
+      // Si no funciona el deep link, abre la web de Daviplata
+      final webUrl = Uri.parse(
+        'https://www.daviplata.com/wps/portal/daviplata/web/personas/recargar-daviplata',
+      );
+      if (await canLaunchUrl(webUrl)) {
+        await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Por favor, selecciona una cantidad o ingresa una personalizada.',
-            ),
+            content: Text('No se pudo abrir Daviplata ni su web.'),
             backgroundColor: Colors.red,
           ),
         );
-        return; // Salir de la función
       }
     }
+  }
 
-    // Si llegamos aquí, tenemos una _selectedAmount válida
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '¡Gracias por tu donación de \$${_selectedAmount.toStringAsFixed(2)}! (Simulado)',
+  Future<void> _openNequi() async {
+    final monto = _selectedAmount > 0
+        ? _selectedAmount.toInt()
+        : (double.tryParse(_amountController.text) ?? 0).toInt();
+    if (monto <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Selecciona o ingresa un monto válido antes de donar.'),
+          backgroundColor: Colors.red,
         ),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    // Opcional: Limpiar el campo y resetear la selección después de la "donación"
-    _amountController.clear();
-    setState(() {
-      _selectedAmount = 0.0;
-    });
+      );
+      return;
+    }
+    final url = Uri.parse('nequi://send-money?phone=3001234567&amount=$monto');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No se pudo abrir Nequi.')));
+    }
   }
 
   @override
@@ -95,17 +87,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Donaciones', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromRGBO(
-          33,
-          78,
-          62,
-          1.0,
-        ), // Tu color oscuro de AppBar
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ), // Color de la flecha de retroceso
+        backgroundColor: const Color.fromRGBO(33, 78, 62, 1.0),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -116,22 +100,16 @@ class _DonationsScreenState extends State<DonationsScreen> {
               style: counterTitleStyle.copyWith(
                 fontSize: 24,
                 color: _donationButtonText,
-              ), // Usando un estilo de texto existente
+              ),
               textAlign: TextAlign.center,
             ),
-
             const SizedBox(height: 20),
-
             Text(
               'Tu apoyo es fundamental para seguir ofreciendo herramientas y recursos a quienes lo necesitan.',
-              style: menuSectionTitleStyle.copyWith(
-                fontSize: 17,
-              ), // Usando un estilo de texto existente
+              style: menuSectionTitleStyle.copyWith(fontSize: 17),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
-
-            // Opciones de donación predefinidas
             _buildDonationAmountButton('5.000 COP', 5000.0),
             const SizedBox(height: 15),
             _buildDonationAmountButton('10.000 COP', 10000.0),
@@ -139,7 +117,6 @@ class _DonationsScreenState extends State<DonationsScreen> {
             _buildDonationAmountButton('20.000 COP', 20000.0),
             const SizedBox(height: 15),
             _buildDonationAmountButton('50.000 COP', 50000.0),
-
             const SizedBox(height: 40),
             Text(
               'O ingresa otra cantidad:',
@@ -152,18 +129,12 @@ class _DonationsScreenState extends State<DonationsScreen> {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
-                color: Color.fromRGBO(
-                  33,
-                  78,
-                  62,
-                  1.0,
-                ), // Color del texto de entrada
+                color: Color.fromRGBO(33, 78, 62, 1.0),
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
                 hintText: 'Ej: 7500.00',
                 hintStyle: TextStyle(
-                  // ignore: deprecated_member_use
                   color: _donationButtonText.withOpacity(0.5),
                 ),
                 prefixText: '\$',
@@ -177,7 +148,6 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   borderSide: BorderSide(color: _donationButtonText, width: 2),
                 ),
                 filled: true,
-                // ignore: deprecated_member_use
                 fillColor: Colors.white.withOpacity(0.9),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 15.0,
@@ -185,7 +155,6 @@ class _DonationsScreenState extends State<DonationsScreen> {
                 ),
               ),
               onChanged: (value) {
-                // Limpiar la selección de botones predefinidos si se escribe algo
                 if (value.isNotEmpty) {
                   setState(() {
                     _selectedAmount = 0.0;
@@ -195,13 +164,21 @@ class _DonationsScreenState extends State<DonationsScreen> {
             ),
             const SizedBox(height: 30),
             BotonElevado(
-              label: 'Donar ahora',
+              label: 'Daviplata',
               onPressed: _processDonation,
-              backgroundColor:
-                  _donationButtonText, // Usar el color oscuro para el botón final
+              backgroundColor: Colors.red,
               textColor: Colors.white,
-              width: 250, // Ajusta el ancho si es necesario
-              height: 55, // Ajusta la altura si es necesario
+              width: 250,
+              height: 55,
+            ),
+            const SizedBox(height: 20),
+            BotonElevado(
+              label: 'Nequi',
+              onPressed: _openNequi,
+              backgroundColor: Colors.purple,
+              textColor: Colors.white,
+              width: 250,
+              height: 55,
             ),
           ],
         ),
@@ -209,23 +186,18 @@ class _DonationsScreenState extends State<DonationsScreen> {
     );
   }
 
-  // Widget helper para los botones de cantidad predefinida
   Widget _buildDonationAmountButton(String label, double amount) {
     bool isSelected = _selectedAmount == amount;
     return BotonElevado(
       label: label,
-      backgroundColor:
-          isSelected
-              ? _donationButtonText
-              : _donationButtonBg, // Cambia de color si está seleccionado
+      backgroundColor: isSelected ? _donationButtonText : _donationButtonBg,
       textColor: isSelected ? Colors.white : _donationButtonText,
-      width: 200, // Ancho fijo para estos botones
+      width: 200,
       height: 50,
       onPressed: () {
         setState(() {
           _selectedAmount = amount;
-          _amountController
-              .clear(); // Limpiar el campo de texto si se selecciona un botón
+          _amountController.clear();
         });
       },
     );
