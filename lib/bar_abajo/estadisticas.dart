@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart'; // Importa la librería de gráficos
-// Para los colores de la AppBar
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -13,18 +12,25 @@ class StatsScreen extends StatefulWidget {
 
 class _StatsScreenState extends State<StatsScreen> {
   // --- Datos de ejemplo para el progreso diario ---
-  // Representa el nivel de compromiso o el resultado de una encuesta diaria.
-  // Podría ser una escala de 1 a 5, o cualquier métrica que uses.
-  // Aquí, cada FlSpot es (día_relativo, valor_del_compromiso).
-  // Por ejemplo, para los últimos 7 días.
   final List<double> dailyCommitment = [
     3.0, // Día 1
     4.0, // Día 2
     3.5, // Día 3
-    5.0, // Día 4 (¡Excelente compromiso!)
-    2.0, // Día 5 (Un día más difícil)
+    5.0, // Día 4
+    2.0, // Día 5
     4.5, // Día 6
     4.0, // Día 7 (Hoy)
+  ];
+
+  // Colores personalizados para cada barra del gráfico
+  final List<Color> barColors = [
+    Colors.blueAccent,
+    Colors.green,
+    Colors.orange,
+    Colors.purple,
+    Colors.redAccent,
+    Colors.teal,
+    Colors.amber,
   ];
 
   // Datos para los contadores principales
@@ -34,7 +40,6 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Usa los colores directamente
     final Color appBarColor = const Color.fromRGBO(163, 217, 207, 1.0);
     final Color iconTextColor = const Color.fromRGBO(33, 78, 62, 1.0);
     final Color appBackgroundColor = const Color.fromRGBO(163, 217, 207, 1.0);
@@ -50,7 +55,6 @@ class _StatsScreenState extends State<StatsScreen> {
       ),
       body: Stack(
         children: [
-          // Fondo de la pantalla
           Positioned.fill(child: Container(color: appBackgroundColor)),
           SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -89,7 +93,7 @@ class _StatsScreenState extends State<StatsScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // --- NUEVA SECCIÓN: Gráfico de Progreso Diario ---
+                // --- Gráfico de Progreso Diario ---
                 Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -111,29 +115,25 @@ class _StatsScreenState extends State<StatsScreen> {
                         ),
                         const SizedBox(height: 10),
                         SizedBox(
-                          height: 250, // Altura del gráfico
+                          height: 250,
                           child: BarChart(
                             BarChartData(
                               alignment: BarChartAlignment.spaceAround,
-                              maxY: 5, // Escala de 0 a 5 para el compromiso
-                              barTouchData: BarTouchData(
-                                enabled: false,
-                              ), // Deshabilita el toque para simplificar
+                              maxY: 5,
+                              barTouchData: BarTouchData(enabled: false),
                               titlesData: FlTitlesData(
                                 show: true,
                                 bottomTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
-                                    getTitlesWidget:
-                                        getBottomTitles, // Función para las etiquetas de abajo
+                                    getTitlesWidget: getBottomTitles,
                                     reservedSize: 30,
                                   ),
                                 ),
                                 leftTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
-                                    getTitlesWidget:
-                                        getLeftTitles, // Función para las etiquetas de la izquierda
+                                    getTitlesWidget: getLeftTitles,
                                     reservedSize: 40,
                                   ),
                                 ),
@@ -144,9 +144,7 @@ class _StatsScreenState extends State<StatsScreen> {
                                   sideTitles: SideTitles(showTitles: false),
                                 ),
                               ),
-                              gridData: const FlGridData(
-                                show: false,
-                              ), // No mostrar la cuadrícula
+                              gridData: const FlGridData(show: false),
                               borderData: FlBorderData(
                                 show: true,
                                 border: Border.all(
@@ -154,25 +152,24 @@ class _StatsScreenState extends State<StatsScreen> {
                                   width: 1,
                                 ),
                               ),
-                              barGroups:
-                                  dailyCommitment.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    double value = entry.value;
-                                    return BarChartGroupData(
-                                      x: index,
-                                      barRods: [
-                                        BarChartRodData(
-                                          toY: value,
-                                          color:
-                                              appBarColor, // Color de las barras
-                                          width: 16,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }).toList(),
+                              barGroups: dailyCommitment.asMap().entries.map((
+                                entry,
+                              ) {
+                                int index = entry.key;
+                                double value = entry.value;
+                                return BarChartGroupData(
+                                  x: index,
+                                  barRods: [
+                                    BarChartRodData(
+                                      toY: value,
+                                      color:
+                                          barColors[index % barColors.length],
+                                      width: 16,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),
