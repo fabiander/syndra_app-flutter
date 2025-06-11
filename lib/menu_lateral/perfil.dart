@@ -1,7 +1,8 @@
-// lib/barfondo/perfil.dart
 import 'package:flutter/material.dart';
 import 'package:syndra_app/texto/tipoletra.dart';
 import 'package:syndra_app/botones_base/boton_elevado.dart';
+import 'package:syndra_app/data/connection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -16,18 +17,44 @@ class _PerfilScreenState extends State<PerfilScreen> {
   String _userEmail = 'usuario.ejemplo@email.com';
   String _userUsername = 'ejemplo_user';
   bool _notificationsEnabled = true;
+  String _userId = '';
 
   final Color _primaryColor = const Color.fromRGBO(33, 78, 62, 1.0);
   final Color _secondaryColor = const Color.fromRGBO(163, 217, 207, 1.0);
   final Color _textColor = const Color.fromRGBO(33, 78, 62, 1.0);
 
-  // Asegúrate de que _messageController no se use aquí si no lo necesitas,
-  // y si no está declarado en este archivo, elimina el dispose para él.
-  // @override
-  // void dispose() {
-  //   _messageController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _userId = prefs.getString('loggedInUserId') ?? '';
+    // Si quieres cargar los datos reales del usuario, puedes hacerlo aquí:
+    // final user = await MongoDatabase.getUserById(_userId);
+    // setState(() {
+    //   _userName = user?['name'] ?? _userName;
+    //   _userAge = user?['age'] ?? _userAge;
+    //   _userEmail = user?['email'] ?? _userEmail;
+    //   _userUsername = user?['username'] ?? _userUsername;
+    // });
+  }
+
+  Future<void> _updateUserProfile({
+    String? name,
+    int? age,
+    String? email,
+    String? username,
+  }) async {
+    await MongoDatabase.updateDocumentById(_userId, {
+      'name': name ?? _userName,
+      'age': age ?? _userAge,
+      'email': email ?? _userEmail,
+      'username': username ?? _userUsername,
+    });
+  }
 
   void _showEditFieldDialog({
     required String title,
@@ -71,23 +98,25 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  void _saveUserName(String newName) {
+  void _saveUserName(String newName) async {
     if (newName.isNotEmpty) {
       setState(() {
         _userName = newName;
       });
+      await _updateUserProfile(name: newName);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
     }
   }
 
-  void _saveUserAge(String newAgeStr) {
+  void _saveUserAge(String newAgeStr) async {
     final int? newAge = int.tryParse(newAgeStr);
     if (newAge != null && newAge > 0 && newAge < 120) {
       setState(() {
         _userAge = newAge;
       });
+      await _updateUserProfile(age: newAge);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Edad actualizada')));
@@ -100,13 +129,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
   }
 
-  void _saveUserEmail(String newEmail) {
+  void _saveUserEmail(String newEmail) async {
     if (newEmail.isNotEmpty &&
         newEmail.contains('@') &&
         newEmail.contains('.')) {
       setState(() {
         _userEmail = newEmail;
       });
+      await _updateUserProfile(email: newEmail);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Correo electrónico actualizado')),
       );
@@ -117,11 +147,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
   }
 
-  void _saveUserUsername(String newUsername) {
+  void _saveUserUsername(String newUsername) async {
     if (newUsername.isNotEmpty && newUsername.length >= 3) {
       setState(() {
         _userUsername = newUsername;
       });
+      await _updateUserProfile(username: newUsername);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Usuario actualizado')));
@@ -177,50 +208,46 @@ class _PerfilScreenState extends State<PerfilScreen> {
               label: 'Nombre',
               value: _userName,
               icon: Icons.person_outline,
-              onTap:
-                  () => _showEditFieldDialog(
-                    title: 'Editar Nombre',
-                    initialValue: _userName,
-                    onSave: _saveUserName,
-                  ),
+              onTap: () => _showEditFieldDialog(
+                title: 'Editar Nombre',
+                initialValue: _userName,
+                onSave: _saveUserName,
+              ),
             ),
             const SizedBox(height: 10),
             _buildInfoTile(
               label: 'Edad',
               value: _userAge.toString(),
               icon: Icons.cake,
-              onTap:
-                  () => _showEditFieldDialog(
-                    title: 'Editar Edad',
-                    initialValue: _userAge.toString(),
-                    onSave: _saveUserAge,
-                    keyboardType: TextInputType.number,
-                  ),
+              onTap: () => _showEditFieldDialog(
+                title: 'Editar Edad',
+                initialValue: _userAge.toString(),
+                onSave: _saveUserAge,
+                keyboardType: TextInputType.number,
+              ),
             ),
             const SizedBox(height: 10),
             _buildInfoTile(
               label: 'Correo Electrónico',
               value: _userEmail,
               icon: Icons.email_outlined,
-              onTap:
-                  () => _showEditFieldDialog(
-                    title: 'Editar Correo Electrónico',
-                    initialValue: _userEmail,
-                    onSave: _saveUserEmail,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
+              onTap: () => _showEditFieldDialog(
+                title: 'Editar Correo Electrónico',
+                initialValue: _userEmail,
+                onSave: _saveUserEmail,
+                keyboardType: TextInputType.emailAddress,
+              ),
             ),
             const SizedBox(height: 10),
             _buildInfoTile(
               label: 'Usuario',
               value: _userUsername,
               icon: Icons.account_circle_outlined,
-              onTap:
-                  () => _showEditFieldDialog(
-                    title: 'Editar Usuario',
-                    initialValue: _userUsername,
-                    onSave: _saveUserUsername,
-                  ),
+              onTap: () => _showEditFieldDialog(
+                title: 'Editar Usuario',
+                initialValue: _userUsername,
+                onSave: _saveUserUsername,
+              ),
             ),
             const SizedBox(height: 10),
             _buildProfileTile(
@@ -253,12 +280,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     ),
                   ),
                 );
+                // Si quieres guardar este cambio en la base de datos, llama aquí a tu método
+                // await MongoDatabase.updateDocumentById(_userId, {'notificationsEnabled': value});
               },
               activeColor: _primaryColor,
             ),
             const SizedBox(height: 40),
-
-            // **SECCIÓN "INFORMACIÓN DE LA APP" ELIMINADA DE AQUÍ**
 
             // Botón de Cerrar Sesión
             BotonElevado(
@@ -315,10 +342,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
             color: Colors.grey[700],
           ),
         ),
-        trailing:
-            onTap != null
-                ? Icon(Icons.edit, size: 20, color: Colors.grey)
-                : null,
+        trailing: onTap != null
+            ? Icon(Icons.edit, size: 20, color: Colors.grey)
+            : null,
         onTap: onTap,
       ),
     );
@@ -341,13 +367,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
           label,
           style: menuSectionTitleStyle.copyWith(color: _textColor),
         ),
-        trailing:
-            trailingText != null
-                ? Text(
-                  trailingText,
-                  style: menuSectionTitleStyle.copyWith(color: Colors.grey),
-                )
-                : Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        trailing: trailingText != null
+            ? Text(
+                trailingText,
+                style: menuSectionTitleStyle.copyWith(color: Colors.grey),
+              )
+            : Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: onTap,
       ),
     );
